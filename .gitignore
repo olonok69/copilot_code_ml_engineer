@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / machine-local files — never commit
+.env
+config.env
+IDENTITY.md
+*.local.json
+.github/copilot/settings.local.json
+
+# Indexes and local agent state
+.codegraph/
+.serena/
+
+# Note: the generated .pptx IS versioned (it is a deliverable).
+
+# The methodology keeps its engineering record under data/ (gitignored by design);
+# the knowledge-graph tests may create data/knowledge-graph/ here.
+data/

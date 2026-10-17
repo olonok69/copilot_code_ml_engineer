@@ -1,0 +1,16 @@
+{
+  "chat.permissions.default": "manual",
+  "chat.tools.terminal.autoApprove": {
+    "git status": true,
+    "git diff": true,
+    "git log": true,
+    "npm test": true,
+    "/^pytest( |$)/": true,
+    "git push": false,
+    "/^gh pr (create|merge|ready)/": false
+  },
+  "chat.tools.urls.autoApprove": {
+    "https://docs.github.com": true
+  },
+  "chat.agent.sandbox.enabled": true
+}

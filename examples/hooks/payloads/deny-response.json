@@ -1,0 +1,9 @@
+{
+  "permissionDecision": "deny",
+  "permissionDecisionReason": "Methodology handoff gate: outward-facing command blocked.",
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "Methodology handoff gate: outward-facing command blocked."
+  }
+}

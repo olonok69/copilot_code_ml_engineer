@@ -1,0 +1,12 @@
+# Copilot instructions (repository-wide)
+
+Keep this file small. `AGENTS.md` carries the orientation; this file exists because Copilot code review in
+VS Code, Visual Studio and Eclipse reads only `.github/copilot-instructions.md`.
+
+- Follow `AGENTS.md`: plan → agree → implement; verify at the output contract; generic fixes only.
+- Evidence before claims: no "fixed" or "passing" without the command output that shows it.
+- Human-only: push, PR create/merge/ready, `/pr auto`, `/pr automerge`, releases, deploys.
+- Reviewing a PR: flag changes to `.github/hooks/**`, `.github/instructions/**`, `.github/skills/**`,
+  `.github/agents/**`, `.mcp.json`, `AGENTS.md` or this file as **governance changes** that need a code
+  owner — a PR can otherwise rewrite its own reviewer's instructions.
+- Never commit secrets, customer names or internal ticket IDs in code.

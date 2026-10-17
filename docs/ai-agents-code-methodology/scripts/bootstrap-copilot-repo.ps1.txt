@@ -1,0 +1,104 @@
+# Rename this file to bootstrap-copilot-repo.ps1 on the target machine before running.
+# Scaffolds the GitHub Copilot surface of the AI-agent methodology into the target repo:
+#   AGENTS.md, .github/copilot-instructions.md, .github/instructions/, .github/skills/,
+#   .github/agents/, .github/hooks/, .mcp.json, .vscode/mcp.json,
+#   .github/workflows/copilot-setup-steps.yml
+# Existing files are NEVER overwritten unless you pass -Force.
+# It does not commit, push or call any GitHub API — the human reviews and commits.
+
+param(
+    [string]$RepoRoot = ".",
+    [switch]$Force,
+    [switch]$SkipCloudAgent   # skip copilot-setup-steps.yml (no cloud-agent use in this repo)
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+$repo = (Resolve-Path $RepoRoot).Path
+$methodologyDir = Join-Path $repo "data/changes/ai-agent-methodology"
+$src = Join-Path $methodologyDir "copilot"
+$templatesDir = Join-Path $methodologyDir "templates"
+$changesDir = Join-Path $repo "data/changes"
+
+if (-not (Test-Path $src)) { throw "Copilot pack not found: $src" }
+
+function Copy-Safe {
+    param([string]$Source, [string]$Destination)
+    $parent = Split-Path -Parent $Destination
+    if ($parent -and -not (Test-Path $parent)) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
+    if ((Test-Path $Destination) -and -not $Force) {
+        Write-Host "Exists:  $Destination (left unchanged; use -Force to overwrite)"
+        return
+    }
+    Copy-Item -Path $Source -Destination $Destination -Force
+    Write-Host "Created: $Destination"
+}
+
+$gh = Join-Path $repo ".github"
+
+# Tier 1 memory
+Copy-Safe (Join-Path $src "AGENTS.md.example") (Join-Path $repo "AGENTS.md")
+Copy-Safe (Join-Path $src "copilot-instructions.md.example") (Join-Path $gh "copilot-instructions.md")
+
+# Scoped instructions
+Get-ChildItem -Path (Join-Path $src "instructions") -Filter "*.instructions.md" | ForEach-Object {
+    Copy-Safe $_.FullName (Join-Path $gh "instructions/$($_.Name)")
+}
+
+# Skills (one folder each; folder name must equal the skill's `name`)
+Get-ChildItem -Path (Join-Path $src "skills") -Directory | ForEach-Object {
+    $skill = $_.Name
+    $skillDir = $_.FullName
+    Get-ChildItem -Path $skillDir -File -Recurse | ForEach-Object {
+        $rel = $_.FullName.Substring($skillDir.Length).TrimStart('\', '/')
+        Copy-Safe $_.FullName (Join-Path $gh "skills/$skill/$rel")
+    }
+}
+
+# Custom agents
+Get-ChildItem -Path (Join-Path $src "agents") -Filter "*.agent.md" | ForEach-Object {
+    Copy-Safe $_.FullName (Join-Path $gh "agents/$($_.Name)")
+}
+
+# Hooks (json + bash + PowerShell + offline test)
+Get-ChildItem -Path (Join-Path $src "hooks") -File | ForEach-Object {
+    Copy-Safe $_.FullName (Join-Path $gh "hooks/$($_.Name)")
+}
+
+# MCP: CLI / VS Code Copilot harness, and VS Code Local harness
+Copy-Safe (Join-Path $src "mcp.json.example") (Join-Path $repo ".mcp.json")
+Copy-Safe (Join-Path $src ".vscode/mcp.json.example") (Join-Path $repo ".vscode/mcp.json")
+
+# Cloud agent environment
+if (-not $SkipCloudAgent) {
+    Copy-Safe (Join-Path $src "copilot-setup-steps.yml.example") (Join-Path $gh "workflows/copilot-setup-steps.yml")
+}
+
+# Working agreement + orientation under data/changes
+if (Test-Path $templatesDir) {
+    Copy-Safe (Join-Path $templatesDir "COPILOT_WORKING_AGREEMENT_TEMPLATE.md") (Join-Path $changesDir "_copilot_working_agreement_template.md")
+    Copy-Safe (Join-Path $templatesDir "ORIENTATION_TEMPLATE.md") (Join-Path $changesDir "_orientation_template.md")
+}
+
+# Ignore machine-local and index files
+$gitignore = Join-Path $repo ".gitignore"
+if (Test-Path $gitignore) {
+    $gi = [string](Get-Content $gitignore -Raw)
+    foreach ($line in @(".codegraph/", "IDENTITY.md", ".github/copilot/settings.local.json")) {
+        if ($gi -notmatch ("(?m)^" + [regex]::Escape($line) + "\s*$")) {
+            Add-Content -Path $gitignore -Value $line
+            Write-Host "Updated: $gitignore (added $line)"
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "Copilot bootstrap complete. Next (by the human):"
+Write-Host "  1. bash .github/hooks/test-block-external-git.sh   (expect 0 failures)"
+Write-Host "     Mark the hook scripts executable in git: git update-index --chmod=+x .github/hooks/*.sh"
+Write-Host "  2. codegraph init ; launch 'copilot' from the repo root and trust the folder ; check /mcp /skills /instructions"
+Write-Host "  3. Test the hook against /pr create, /pr auto, /pr automerge (UNVERIFIED whether they reach preToolUse)."
+Write-Host "  4. Keep Copilot code-review approvals OFF; add CODEOWNERS for AGENTS.md, .github/**, .mcp.json."
+Write-Host "  5. Cloud agent: paste MCP JSON in Settings -> Copilot -> MCP servers; commit copilot-setup-steps.yml to the default branch."
+Write-Host "  6. Read data/changes/ai-agent-methodology/COPILOT_ADAPTATION.md"

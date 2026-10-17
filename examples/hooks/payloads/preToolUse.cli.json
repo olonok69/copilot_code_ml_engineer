@@ -1,0 +1,7 @@
+{
+  "sessionId": "5e9ccd74-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  "timestamp": 1760000000000,
+  "cwd": "/home/dev/my-project",
+  "toolName": "bash",
+  "toolArgs": "{\"command\":\"git push origin main\"}"
+}

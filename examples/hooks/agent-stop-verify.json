@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      { "type": "command", "bash": "./.github/hooks/scripts/verify_before_stop.sh", "cwd": ".", "timeoutSec": 10 }
+    ]
+  }
+}

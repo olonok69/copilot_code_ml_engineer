@@ -1,0 +1,24 @@
+%% Editable source of agents.png (render: python render_agents.py — the PNG is drawn with Pillow; keep both in sync)
+%% Left: subagents inside one Copilot session (isolated context, summary returns).
+%% Right: delegation to the Copilot cloud agent (a full session, its own copilot/ branch, a draft PR).
+flowchart LR
+  subgraph S["COPILOT — subagents (task tool, /fleet)"]
+    M["Main session\n(your context)"]
+    A1["explore\n(built-in, read-only)"]
+    A2["/fleet workers\n(parallel)"]
+    A3["custom agent\n.github/agents/*.agent.md\n(refactor-scout)"]
+    M -- "prompt with context" --> A1
+    M -- " " --> A2
+    M -- " " --> A3
+    A1 -- "only the SUMMARY returns" --> M
+    A2 -- " " --> M
+    A3 -- " " --> M
+  end
+  subgraph T["COPILOT CLOUD AGENT — /delegate, &, issue, API"]
+    D["Delegation\n(/delegate or & prefix)"]
+    C["Cloud agent\n(full session, Actions sandbox)"]
+    B[("copilot/ branch\n+ draft PR")]
+    H["Human\nreviews, approves workflows, merges"]
+    D --> C --> B --> H
+  end
+  S -. "isolate context, low cost  vs  async, full session" .- T

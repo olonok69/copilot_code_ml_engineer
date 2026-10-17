@@ -1,0 +1,64 @@
+# .github/workflows/copilot-review.yml
+# Read-only PR summary/review with the Copilot CLI in GitHub Actions.
+# Verified against the GitHub docs on 2026-10-17 (automate-with-actions, use-copilot-cli-in-actions).
+#
+# Auth — pick ONE:
+#   (a) GITHUB_TOKEN with `copilot-requests: write` (below). The org policy
+#       "Allow use of Copilot CLI billed to the organization" must be on.
+#   (b) A fine-grained, user-owned PAT with the "Copilot Requests" permission, stored as the
+#       secret COPILOT_PAT and exposed as COPILOT_GITHUB_TOKEN (takes precedence over GH_TOKEN/GITHUB_TOKEN).
+#
+# Safety:
+#   --trust-folder   without it, `-p` mode SKIPS repo hooks (.github/hooks) in an untrusted folder,
+#                    so the push gate would silently not run.
+#   --allow-tool     minimal, explicit; deny rules beat allow rules, even with --yolo.
+#   --no-ask-user    nobody is there to answer.
+#   --deny-tool='write'  a bare Kind (like the documented bare `memory`/`MyMCP`) — UNVERIFIED for `write`;
+#                    if your build rejects it, hide edit tools with --excluded-tools instead.
+name: Copilot PR summary
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      copilot-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Summarise and review the diff (read-only)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}   # option (b)
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          copilot -p "Summarise the changes between origin/${BASE_REF} and HEAD, then list risky edits \
+          (security, error handling, missing tests) as file:line bullets. Do not modify any file." \
+            -s --no-ask-user --trust-folder \
+            --allow-tool='shell(git diff)' \
+            --allow-tool='shell(git log)' \
+            --allow-tool='shell(git show)' \
+            --deny-tool='shell(git push)' \
+            --deny-tool='shell(gh pr)' \
+            --deny-tool='write' \
+            > copilot-summary.md
+          cat copilot-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: copilot-summary
+          path: copilot-summary.md

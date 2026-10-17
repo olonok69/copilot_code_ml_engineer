@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      { "type": "prompt", "prompt": "/day start" }
+    ]
+  }
+}

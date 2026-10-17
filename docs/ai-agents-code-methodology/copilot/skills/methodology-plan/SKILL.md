@@ -1,0 +1,72 @@
+---
+name: methodology-plan
+argument-hint: "<issue id + title>"
+description: >-
+  Fill the methodology planning template after inbound triage and cheap
+  investigation. Use in plan mode (/plan) before writing production code.
+---
+
+# methodology-plan
+
+## When to use
+
+- After stages 1–4 (orient, inbound triage, provenance, cheap root-cause probe).
+- Before any production implementation.
+- User asks for a plan, options, or “should we fix this?”.
+
+## Rules
+
+1. Stay in **Plan** posture: propose, do not implement.
+2. Prefer evidence already gathered (contract sample, oracle output, KG hits).
+3. Record rejected options, not only the chosen one.
+
+## Template (fill completely)
+
+```text
+Issue: <tracker-id> - <short title>
+
+1) Contract confirmation
+- Consumer-visible contract: <API/UI/event/artifact>
+- Symptom reproduced there: <yes/no + evidence source>
+
+2) Provenance
+- Reproduced on pre-change baseline: <yes/no>
+- Classification: <regression | pre-existing>
+
+3) Root cause hypothesis
+- Deterministic probe used: <probe>
+- Result: <what proved the hypothesis>
+
+4) Fix shape (general-case)
+- Structural class addressed: <class>
+- Why not instance-specific: <one sentence>
+- Options considered (incl. rejected): <bullets>
+
+5) Verification plan
+- RED test: <test id>
+- Scoped suite: <command>
+- Regression suite: <command>
+- Contract output repro: <command/path>
+- Runtime parity check: <where and how>
+
+6) Handover outputs
+- Change summary doc
+- Acceptance criteria
+- Open follow-ups
+```
+
+## Exit
+
+Stop and ask for explicit human agreement. Only after agreement, leave plan mode and implement with TDD.
+
+---
+
+## Invocation per surface (GitHub Copilot)
+
+All surfaces. Pair it with plan mode: `/plan` or Shift+Tab in the CLI (enforced at the tool layer), the Plan agent in VS Code.
+
+- **Copilot CLI:** type `/methodology-plan` or let the agent pick it from the `description`. Manage with `/skills` or `copilot skill list|add|remove`.
+- **VS Code (Copilot or Local harness):** `/methodology-plan` in chat; manage in **Chat: Open Customizations**.
+- **Copilot cloud agent / code review:** automatic selection only (by `description`).
+- ⚠️ The Copilot CLI does **not** read `~/.claude/skills/` (VS Code does). A personal copy goes in `~/.copilot/skills/methodology-plan/` (or `~/.agents/skills/`), or register the folder with `copilot skill add <dir>` / `COPILOT_SKILLS_DIRS`. Project copy: `.github/skills/methodology-plan/SKILL.md`.
+- Frontmatter is Copilot-valid: `name` equals the folder name (lowercase-hyphen — VS Code silently drops a mismatch), `description` ≤ 1024 characters, no `trigger:` key.

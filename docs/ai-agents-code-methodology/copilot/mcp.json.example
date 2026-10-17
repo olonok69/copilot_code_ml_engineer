@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "type": "local",
+      "command": "codegraph",
+      "args": ["serve", "--path", ".", "--mcp"],
+      "tools": ["*"]
+    },
+    "serena": {
+      "type": "local",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"],
+      "tools": ["*"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "tools": ["*"]
+    }
+  }
+}

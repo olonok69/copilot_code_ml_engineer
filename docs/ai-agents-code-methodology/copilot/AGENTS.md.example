@@ -1,0 +1,28 @@
+# Agent orientation
+
+This repository uses the **AI-agent methodology** (plan → agree → implement; verify at the consumer-visible
+contract; the human owns every external action). This file is read by every Copilot surface (CLI, VS Code,
+cloud agent, code review) — keep it short: orientation and pointers only.
+
+## Read first every session
+
+1. If present, the machine-local identity card `data/changes/s3-sync/IDENTITY.md` (role: publisher or
+   contributor — read it before writing anything shared).
+2. Live snapshot: `data/changes/STATUS.md`. Danger zones: `data/changes/SHARP_EDGES.md`.
+3. Scoped gates load automatically from `.github/instructions/*.instructions.md`.
+4. Full pack (on demand): `data/changes/ai-agent-methodology/COPILOT_ADAPTATION.md`.
+
+## Do not load by default
+
+Per-ticket writeups, playbooks and long history under `data/changes/<id>/` — open on demand only.
+
+## Output contract
+
+Define here (one paragraph): what downstream consumers actually observe (API JSON, UI field, event,
+artifact). Every bug is reproduced and verified against that surface.
+
+## Human-only actions
+
+`git push`, `gh pr create|merge|ready`, the CLI's `/pr create`, `/pr auto` and `/pr automerge`, releases and
+deploys are **human-only**. A `preToolUse` hook (`.github/hooks/block-external-git.json`) denies the shell
+forms; do not try to work around it. Prepare the branch and a handover note instead.

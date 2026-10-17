@@ -1,0 +1,41 @@
+# Copy to .github/workflows/copilot-setup-steps.yml — it must be on the DEFAULT branch to take effect.
+# Prepares the Copilot cloud agent's ephemeral environment before it starts working.
+# Rules (GitHub docs, verified 2026-10-17): a single job named `copilot-setup-steps`.
+# The MCP server JSON itself is pasted in repository Settings -> Copilot -> MCP servers (not a file);
+# secrets it uses must be Agents secrets/variables prefixed COPILOT_MCP_.
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install CodeGraph CLI
+        run: npm install -g @colbymchenry/codegraph
+
+      - name: Install uv (provides uvx for Serena)
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build the CodeGraph index
+        run: codegraph init
+
+      - name: Make hook scripts executable
+        run: chmod +x .github/hooks/*.sh || true

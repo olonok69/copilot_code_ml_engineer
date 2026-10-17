@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "type": "local",
+      "command": "codegraph",
+      "args": ["serve", "--path", ".", "--mcp"],
+      "tools": ["codegraph_explore"]
+    },
+    "serena": {
+      "type": "local",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"],
+      "tools": ["find_symbol", "find_referencing_symbols", "get_symbols_overview"]
+    },
+    "internal-docs": {
+      "type": "http",
+      "url": "https://docs-mcp.example.internal/mcp",
+      "headers": { "Authorization": "Bearer ${COPILOT_MCP_DOCS_TOKEN}" },
+      "tools": ["search_docs"]
+    }
+  }
+}
