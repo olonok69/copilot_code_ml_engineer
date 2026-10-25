@@ -8,8 +8,8 @@
 > This is the guide for the **speaker**. Each section matches a block of slides and gives the story
 > to tell, the points that matter, and a closing line 🗣️ you can say as it stands. Audience:
 > **technical / developers**. This is the **GitHub Copilot volume** of the course. Its siblings are
-> the [Claude Code volume](../claude_code_ml_engineer) and the
-> [Cursor volume](../cursor_code_ml_engineer) (the [Pi volume](../pi_code_ml_engineer),
+> the [Claude Code volume](https://github.com/olonok69/claude_code_ml_engineer) and the
+> [Cursor volume](https://github.com/olonok69/cursor_code_ml_engineer) (the [Pi volume](../pi_code_ml_engineer),
 > built alongside). The structure and the Part 2/3 material are
 > shared across volumes. Part 1 is new.
 >

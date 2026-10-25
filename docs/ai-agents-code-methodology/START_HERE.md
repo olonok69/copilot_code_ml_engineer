@@ -2,8 +2,8 @@
 
 Use this folder as a portable starter kit for a different repository and machine. This copy is the
 **GitHub Copilot** edition (course volume 3). The Cursor edition lives in the Cursor volume
-([`cursor_code_ml_engineer`](../../../cursor_code_ml_engineer/)), and the original Claude Code setup in the Claude
-Code volume ([`claude_code_ml_engineer`](../../../claude_code_ml_engineer/)); a Pi edition is in
+([`cursor_code_ml_engineer`](https://github.com/olonok69/cursor_code_ml_engineer)), and the original Claude Code setup in the Claude
+Code volume ([`claude_code_ml_engineer`](https://github.com/olonok69/claude_code_ml_engineer)); a Pi edition is in
 [`pi_code_ml_engineer`](../../../pi_code_ml_engineer/).
 
 ## Goal
@@ -23,6 +23,7 @@ Set up a reliable AI-agent workflow with GitHub Copilot with:
 3. `COPILOT_ADAPTATION.md` — surfaces, file mapping, hooks, the two new holes to close.
 4. `copilot/README.md` — the copy-ready files and where each goes.
 5. `TRANSFER_AND_BOOTSTRAP.md` — moving the pack and installing it.
+6. `COPILOT_REPLICATION_CHECKLIST.md` — verify a working Claude Code setup against Copilot safely.
 
 ## Fast path (30–60 minutes)
 

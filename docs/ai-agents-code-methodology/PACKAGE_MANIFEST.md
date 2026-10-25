@@ -43,7 +43,7 @@ Artifacts included in the portable methodology package (GitHub Copilot edition).
 10. `copilot/hooks/block-external-git.json` + `.sh` + `.ps1` + `test-block-external-git.sh`
 11. `copilot/agents/refactor-scout.agent.md` — read-only scout
 12. `copilot/copilot-setup-steps.yml.example` — cloud-agent environment
-13. `copilot/skills/{day,atlassian,evidence,kg,kg-refresh,methodology-plan,sanitise-diff}/SKILL.md`
+13. `copilot/skills/{day,atlassian,evidence,preview,kg,kg-refresh,methodology-plan,sanitise-diff}/SKILL.md`
 
 ## Scripts
 
@@ -53,7 +53,7 @@ Artifacts included in the portable methodology package (GitHub Copilot edition).
 ## Not in this edition
 
 The Cursor surface (`cursor/`, `CURSOR_ADAPTATION.md`), the Confluence publishing pack and `flow.svg` live in
-the Cursor volume: [`cursor_code_ml_engineer`](../../../cursor_code_ml_engineer/).
+the Cursor volume: [`cursor_code_ml_engineer`](https://github.com/olonok69/cursor_code_ml_engineer).
 
 ## Intended use
 

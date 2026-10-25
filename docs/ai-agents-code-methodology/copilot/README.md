@@ -23,8 +23,9 @@ Copilot moves fast, re-check before reuse.
 | [`copilot-setup-steps.yml.example`](./copilot-setup-steps.yml.example) | `.github/workflows/copilot-setup-steps.yml` (default branch) | Cloud agent only |
 | [`skills/*/SKILL.md`](./skills/) | `.github/skills/<name>/` (or personal `~/.copilot/skills/<name>/`) | CLI, VS Code, cloud agent, code review — see each skill's "Invocation per surface" |
 
-Skills: `day`, `atlassian`, `evidence` (local credentials — **do not** rely on them in the cloud agent),
-`kg`, `kg-refresh` (publisher only), `methodology-plan`, `sanitise-diff`.
+Skills: `day`, `atlassian`, `evidence`, `preview` (local credentials — **do not** rely on them in the cloud agent;
+`preview` also needs Docker and a consumer-app clone), `kg`, `kg-refresh` (publisher only), `methodology-plan`,
+`sanitise-diff`.
 
 ## Notes the JSON files cannot carry (JSON has no comments)
 

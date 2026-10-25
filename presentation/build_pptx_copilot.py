@@ -1095,8 +1095,8 @@ def s_transfer(prs):
     ], BLUE, 1.85, size=11)
     card(slide, 0.7, 4.95, 11.95, 1.25,
          "Starter kit: docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md + copilot/", [
-             "AGENTS.md, copilot-instructions, instructions/, skills (day, atlassian, evidence, kg, "
-             "kg-refresh…), hook, read-only agent, .mcp.json, copilot-setup-steps — ready to copy",
+             "AGENTS.md, copilot-instructions, instructions/, skills (day, atlassian, evidence, preview, "
+             "kg…), hook, read-only agent, .mcp.json, copilot-setup-steps — ready to copy",
          ], ACCENT, 0.35, size=11)
     quote(slide, "Third agent, same discipline: the methodology was never the tool.")
 

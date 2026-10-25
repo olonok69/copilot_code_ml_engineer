@@ -50,11 +50,14 @@ Customizations**; `/chronicle skills create` drafts skills from observed usage.
 - [`evidence`](./.github/skills/evidence/SKILL.md) — a run's evidence (source as it was, artefact, result, log).
   ⚠️⚠️ Its first canary **passed with the wrong versions** (two byte-identical uploads); it now asserts known
   timestamps. Core and design: [`../methodology/tools/README.md`](../methodology/tools/README.md)
+- [`preview`](./.github/skills/preview/SKILL.md) — a document's before/after in the **real** preview page: the
+  environment's run next to the code under test **in the deployed image**, plus an item-by-item compare. Local
+  only (Docker). The tool stays in the project — [why](../methodology/tools/README.md#3-not-shipped-here-preview-and-ticket_status).
 
 **Live** (repo root): [`../../.github/skills/`](../../.github/skills/) (`audit`, `audit-python`, `deploy-staging`) —
 see [`../../DEMO_RUNBOOK.md`](../../DEMO_RUNBOOK.md).
 
-Methodology pack: `kg`, `kg-refresh`, `methodology-plan`, `sanitise-diff`, `day`, `atlassian`, `evidence` in
+Methodology pack: `kg`, `kg-refresh`, `methodology-plan`, `sanitise-diff`, `day`, `atlassian`, `evidence`, `preview` in
 [`../../docs/ai-agents-code-methodology/copilot/skills/`](../../docs/ai-agents-code-methodology/copilot/skills/).
 
 ## 2. Slash commands → prompt files or skills

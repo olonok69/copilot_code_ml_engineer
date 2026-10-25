@@ -11,7 +11,7 @@
 > **UNVERIFIED** or **NOT DOCUMENTED** could not be confirmed in the docs; test them on your build.
 >
 > Sibling guide for Cursor: the Cursor volume's `CURSOR_ADAPTATION.md`
-> ([`cursor_code_ml_engineer`](../../../cursor_code_ml_engineer/)).
+> ([`cursor_code_ml_engineer`](https://github.com/olonok69/cursor_code_ml_engineer)).
 >
 > **This replaces an earlier `COPILOT_ADAPTATION.md`** that was tool-agnostic prose with no Copilot paths,
 > flags or config. None of its product claims was false, but it predated the Copilot CLI GA, the cloud
@@ -48,6 +48,11 @@ If you keep only five rules, keep **1–5**. Add **6–7** as soon as the trail 
 
 JetBrains: agent mode and MCP supported; skills, custom agents, custom instructions and prompt files are
 **Preview**.
+
+**WSL is an execution location, not a sixth Copilot surface.** A CLI installed in WSL and VS Code opened
+through Remote - WSL use Linux tools and paths; a Windows-local VS Code window opened on a `\\wsl$` path is
+a different execution context. For the supported `code .` flow, extension placement, and acceptance
+checks, see [`COPILOT_REPLICATION_CHECKLIST.md`](./COPILOT_REPLICATION_CHECKLIST.md#2-wsl-is-an-execution-environment-not-a-copilot-surface).
 
 ---
 
@@ -138,12 +143,18 @@ ported skill: drop `trigger:` (not a Copilot key; whether unknown keys are ignor
 | `day` | CLI, VS Code | Local shell + S3 sync. Not for the cloud agent (no `~/.aws`, ephemeral). |
 | `atlassian` | CLI, VS Code | Local token file. With the CLI sandbox on, add the Atlassian host to `sandbox.userPolicy.network.allowedHosts`. Skills have no `excludeAgent`; to keep it off the cloud agent, do not commit it — put it in `~/.copilot/skills` (other hiding mechanisms UNVERIFIED). |
 | `evidence` | CLI, VS Code | Local only; read-only enforced in the script. Sandbox path grants for `~/.aws` UNVERIFIED — inspect with `/sandbox policy`. `allowed-tools` grammar UNVERIFIED. |
+| `preview` | CLI, VS Code | Local only: Docker, a read-only profile and a consumer-app clone; spends real LLM calls. Keep it out of the repo (`~/.copilot/skills`) like `atlassian`. One document at a time, always `--stop`. |
 | `kg` | all | Deterministic scripts — direct port. |
 | `kg-refresh` | CLI (publisher) | Semantic step via CLI subagents (`task` / `/fleet`), or keep running it from Claude Code. Publisher guard stays in the script. |
 | `methodology-plan`, `sanitise-diff` | all | Pure procedure. |
 
 Personal skills from Claude Code: copy or symlink to `~/.copilot/skills/` or `~/.agents/skills/`, or
 `copilot skill add <dir>` / `COPILOT_SKILLS_DIRS`.
+
+For a repeatable comparison against a working Claude Code setup—including safe checks for all eight
+methodology skills and the distinction between skill discovery and tool behavior—use
+[`COPILOT_REPLICATION_CHECKLIST.md`](./COPILOT_REPLICATION_CHECKLIST.md). Do not run shared-record,
+publisher-only, client-data, or paid operations merely to complete a smoke-test table.
 
 ---
 
@@ -287,7 +298,7 @@ AGENTS.md                                   # tier 1, all surfaces
     01-tool-prevalence.instructions.md
     02-gates-and-handoff.instructions.md
     atlassian.instructions.md
-  skills/{day,atlassian,evidence,kg,kg-refresh,methodology-plan,sanitise-diff}/SKILL.md
+  skills/{day,atlassian,evidence,preview,kg,kg-refresh,methodology-plan,sanitise-diff}/SKILL.md
   agents/refactor-scout.agent.md
   hooks/block-external-git.{json,sh,ps1}
   workflows/copilot-setup-steps.yml         # cloud agent only; must be on the default branch

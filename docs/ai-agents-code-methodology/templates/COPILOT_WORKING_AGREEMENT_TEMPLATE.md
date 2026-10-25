@@ -16,7 +16,7 @@
 | `AGENTS.md` | | orientation + pointers + output contract + human-only actions |
 | `.github/copilot-instructions.md` | | short; the only file IDE code review reads |
 | `.github/instructions/*.instructions.md` | | scoped gates (`applyTo`, `excludeAgent`) |
-| `.github/skills/*` | | `kg`, `kg-refresh`, `methodology-plan`, `sanitise-diff` (+ personal: `day`, `atlassian`, `evidence`) |
+| `.github/skills/*` | | `kg`, `kg-refresh`, `methodology-plan`, `sanitise-diff` (+ personal: `day`, `atlassian`, `evidence`, `preview`) |
 | `.github/agents/*.agent.md` | | read-only scouts (`tools: ["read","search"]`) |
 | `.github/hooks/block-external-git.*` | | deny push / PR / merge / release / deploy |
 | `.mcp.json`, `.vscode/mcp.json` | | CodeGraph, Serena, Context7 (Playwright is built into the CLI) |
@@ -47,7 +47,7 @@ All of the above are protected by `CODEOWNERS` + "Require review from Code Owner
 3. Firewall allowlist (Settings → Internet access): `[ ... ]`.
 4. MCP servers (Settings → Copilot → MCP servers): read-only tools only; secrets named `COPILOT_MCP_*`.
 5. `copilot-setup-steps.yml` lives on the default branch and installs: `[ codegraph, uv, ... ]`.
-6. Skills needing local credentials (`day`, `atlassian`, `evidence`) are **not** committed; they live in `~/.copilot/skills/`.
+6. Skills needing local credentials (`day`, `atlassian`, `evidence`, `preview`) are **not** committed; they live in `~/.copilot/skills/`.
 
 ## Billing
 

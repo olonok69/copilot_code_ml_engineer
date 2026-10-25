@@ -4,8 +4,8 @@
 > [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) (the narrative thread) with the **how**.
 > Runnable artifacts are in [`examples/`](./examples/); [`docs/`](./docs/) is the methodology pack and
 > reference material. Sibling volumes, same structure and section numbering:
-> [Claude Code](../claude_code_ml_engineer) ·
-> [Cursor](../cursor_code_ml_engineer) ·
+> [Claude Code](https://github.com/olonok69/claude_code_ml_engineer) ·
+> [Cursor](https://github.com/olonok69/cursor_code_ml_engineer) ·
 > [Pi](../pi_code_ml_engineer).
 >
 > **Verification note:** every Copilot claim here comes from
@@ -433,11 +433,11 @@ The exact grammar of `allowed-tools` entries is UNVERIFIED beyond `shell`.
 .github/skills/audit-python/SKILL.md     # → /audit-python on ex_app
 .github/skills/deploy-staging/SKILL.md   # → /deploy-staging on ex_staging
 ```
-Methodology skills (`day`, `atlassian`, `evidence`, `kg`, `kg-refresh`, `methodology-plan`,
+Methodology skills (`day`, `atlassian`, `evidence`, `preview`, `kg`, `kg-refresh`, `methodology-plan`,
 `sanitise-diff`): [`docs/ai-agents-code-methodology/copilot/skills/`](./docs/ai-agents-code-methodology/copilot/skills/);
 worked examples with their tools: [`examples/skills-plugins/`](./examples/skills-plugins/) +
-[`examples/methodology/tools/`](./examples/methodology/tools/). `day`, `atlassian` and `evidence` use local
-credentials — **local surfaces only, not the cloud agent**.
+[`examples/methodology/tools/`](./examples/methodology/tools/). `day`, `atlassian`, `evidence` and `preview` use local
+credentials (`preview` also Docker) — **local surfaces only, not the cloud agent**.
 
 ⚠️ **The strongest reason for a skill is enforcement, not convenience.** "Pull at the start, push at the end"
 sat in an operations doc for months without being followed; packaged as `day start` / `day end` it both

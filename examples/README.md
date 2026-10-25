@@ -1,7 +1,7 @@
 # Examples — adapted for GitHub Copilot
 
 Same structure as the `ejemplos/` folders of the sibling volumes —
-[Claude Code](../../claude_code_ml_engineer/ejemplos/), [Cursor](../../cursor_code_ml_engineer/ejemplos/) — and the
+[Claude Code](https://github.com/olonok69/claude_code_ml_engineer/tree/master/ejemplos), [Cursor](https://github.com/olonok69/cursor_code_ml_engineer/tree/main/ejemplos) — and the
 `examples/` folder of the [Pi volume](../../pi_code_ml_engineer/examples/), rewritten for **GitHub Copilot**
 (this volume uses English folder names: `examples/`, `methodology/`). The methodology and the tool roles
 (CodeGraph, Serena, Playwright, graphify) stay; the *surface* changes (instructions, skills, MCP, hooks, CLI).
@@ -19,7 +19,7 @@ UNVERIFIED, so do the examples. Full adaptation guide:
 | [`context/`](./context/) | `/context`, `/compact` | `/context`, `/compact [focus]`, auto-compaction ~80%, >20 KiB output to a temp file |
 | [`prompt-caching/`](./prompt-caching/) | Caching in Claude Code | Anthropic API demo + the honest answer: no control; VS Code Cache Explorer diagnoses |
 | [`mcp/`](./mcp/) | `.mcp.json` + `claude mcp add` | `.mcp.json` (`mcpServers`, `tools` required) · `.vscode/mcp.json` (`servers`) · cloud-agent repo settings |
-| [`skills-plugins/`](./skills-plugins/) | Slash commands + skills + plugins | `.github/skills/` (`day`, `atlassian`, `evidence`, `audit`…) · prompt files (VS Code Local) · `copilot plugin` |
+| [`skills-plugins/`](./skills-plugins/) | Slash commands + skills + plugins | `.github/skills/` (`day`, `atlassian`, `evidence`, `preview`, `audit`…) · prompt files (VS Code Local) · `copilot plugin` |
 | [`subagents/`](./subagents/) | Task + Agent Teams | built-ins (`explore`, `task`…), `.github/agents/*.agent.md`, `/fleet`, `/delegate` to the cloud agent |
 | [`hooks/`](./hooks/) | Hooks (`exit 2`) | `.github/hooks/*.json` (`preToolUse` deny / exit 2; timeout = fail-open) |
 | [`permissions/`](./permissions/) | `settings.local.json` allowlist | `--allow-tool` / `--deny-tool` (deny wins), trusted folders, sandbox, VS Code `chat.tools.*` |

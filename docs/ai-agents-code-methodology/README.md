@@ -57,8 +57,8 @@ repos).
    initialize docs and the Copilot surface in the target repo.
 - `AGENT_SETUP_TOOLS.md` - setting up and smoke-testing the five day-to-day tools.
 - The Cursor and Claude Code editions of this pack live in the sibling course volumes
-   ([`cursor_code_ml_engineer`](../../../cursor_code_ml_engineer/),
-   [`claude_code_ml_engineer`](../../../claude_code_ml_engineer/)).
+   ([`cursor_code_ml_engineer`](https://github.com/olonok69/cursor_code_ml_engineer),
+   [`claude_code_ml_engineer`](https://github.com/olonok69/claude_code_ml_engineer)).
 - `NEW_REPO_CONFIGURATION_PLAN.md` - phased rollout plan for the first two
    weeks.
 - `PACKAGE_MANIFEST.md` - inventory of all artifacts included in this pack.

@@ -63,7 +63,7 @@ This creates if missing (never overwrites without `-Force`):
 
 1. `AGENTS.md` and `.github/copilot-instructions.md`
 2. `.github/instructions/*.instructions.md` — methodology gates, tool prevalence, Atlassian
-3. `.github/skills/{kg,kg-refresh,methodology-plan,sanitise-diff,day,atlassian,evidence}/`
+3. `.github/skills/{kg,kg-refresh,methodology-plan,sanitise-diff,day,atlassian,evidence,preview}/`
 4. `.github/agents/refactor-scout.agent.md`
 5. `.github/hooks/block-external-git.{json,sh,ps1}` + its offline test
 6. `.mcp.json` (CLI + VS Code Copilot harness) and `.vscode/mcp.json` (VS Code Local harness)

@@ -1,8 +1,8 @@
 # GitHub Copilot — A course in three parts (deck + guides)
 
 > **The GitHub Copilot volume** of a course series — same course, same method, different tool:
-> [Claude Code](../claude_code_ml_engineer) ·
-> [Cursor](../cursor_code_ml_engineer) ·
+> [Claude Code](https://github.com/olonok69/claude_code_ml_engineer) ·
+> [Cursor](https://github.com/olonok69/cursor_code_ml_engineer) ·
 > **GitHub Copilot (this repo)** ·
 > [Pi](../pi_code_ml_engineer).
 
@@ -75,7 +75,7 @@ is new in this volume.
 [`examples/context/`](./examples/context/) (§05) ·
 [`examples/prompt-caching/`](./examples/prompt-caching/) (§06) ·
 [`examples/mcp/`](./examples/mcp/) (§07) ·
-[`examples/skills-plugins/`](./examples/skills-plugins/) (§08 — incl. `day`, `atlassian`, `evidence`; tools in
+[`examples/skills-plugins/`](./examples/skills-plugins/) (§08 — incl. `day`, `atlassian`, `evidence`, `preview`; tools in
 [`examples/methodology/tools/`](./examples/methodology/tools/)) ·
 [`examples/subagents/`](./examples/subagents/) (§09) ·
 [`examples/hooks/`](./examples/hooks/) (§10) ·
