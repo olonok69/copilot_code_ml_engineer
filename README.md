@@ -1,5 +1,7 @@
 # GitHub Copilot — A course in two sessions (deck + guides)
 
+> Versión en español: [`README_ES.md`](./README_ES.md).
+
 > **The GitHub Copilot volume** of a course series — same course, same method, different tool:
 > [Claude Code](https://github.com/olonok69/claude_code_ml_engineer) ·
 > [Cursor](https://github.com/olonok69/cursor_code_ml_engineer) ·
@@ -8,7 +10,8 @@
 
 Material for a **course/workshop** on **GitHub Copilot** as an *agent* (not autocomplete): one
 presentation (`.pptx`) in **two sessions**, two written guides, a live-demo runbook, and runnable examples.
-Aimed at **developers**. English only. Every Copilot claim was checked against docs.github.com and
+Aimed at **developers**. The talk documentation is in English and Spanish (see the naming table below);
+the deck and examples are in English. Every Copilot claim was checked against docs.github.com and
 code.visualstudio.com on **17 October 2026**; where the docs are silent or contradict themselves, the
 material says so.
 
@@ -34,16 +37,18 @@ the skills are demonstrated in Session 1 and exercised safely in Session 2.
 
 ## Naming in this volume
 
-The earlier volumes use Spanish file names with `_EN` English twins. This volume is **English only**, so
-the files carry plain English names:
+The earlier volumes use Spanish file names with `_EN` English twins. This volume started in English, so
+the original files carry plain English names, and the Spanish versions reuse the sibling volumes' Spanish
+names:
 
-| This volume | Cursor / Claude Code volume |
-|---|---|
-| [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md) | `GUIA_TECNICA_EN.md` |
-| [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) | `GUIA_PRESENTACION_EN.md` |
-| [`DEMO_RUNBOOK.md`](./DEMO_RUNBOOK.md) | `DEMO_RUNBOOK_EN.md` |
-| [`examples/`](./examples/) | `ejemplos/` |
-| [`presentation/`](./presentation/) | `presentacion/` |
+| English (this volume) | Spanish (this volume) | Cursor / Claude Code volume |
+|---|---|---|
+| [`README.md`](./README.md) | [`README_ES.md`](./README_ES.md) | `README.md` / `README_EN.md` |
+| [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md) | [`GUIA_TECNICA.md`](./GUIA_TECNICA.md) | `GUIA_TECNICA.md` / `GUIA_TECNICA_EN.md` |
+| [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) | [`GUIA_PRESENTACION.md`](./GUIA_PRESENTACION.md) | `GUIA_PRESENTACION.md` / `GUIA_PRESENTACION_EN.md` |
+| [`DEMO_RUNBOOK.md`](./DEMO_RUNBOOK.md) | [`DEMO_RUNBOOK_ES.md`](./DEMO_RUNBOOK_ES.md) | `DEMO_RUNBOOK.md` / `DEMO_RUNBOOK_EN.md` |
+| [`examples/`](./examples/) | (shared) | `ejemplos/` |
+| [`presentation/`](./presentation/) | (shared) | `presentacion/` |
 
 Section numbering (§00–§16) matches across the guides, the deck and the sibling volumes; §00 (surfaces map)
 is new in this volume.

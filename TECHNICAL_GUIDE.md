@@ -1,5 +1,7 @@
 # GitHub Copilot — Technical implementation guide (course in two sessions)
 
+> Versión en español: [`GUIA_TECNICA.md`](./GUIA_TECNICA.md).
+
 > Copy-paste reference for building each piece. It complements
 > [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) (the narrative thread) with the **how**.
 > Runnable artifacts are in [`examples/`](./examples/); [`docs/`](./docs/) is the methodology pack and
