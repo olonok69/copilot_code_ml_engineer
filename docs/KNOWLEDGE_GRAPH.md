@@ -6,11 +6,13 @@
 > and rebuilt with **`kg-refresh`**. In the real installation everything lives under `data/` (gitignored):
 > the nodes carry internal names, so the graph **never leaves the repo**.
 >
-> This is Part 3 of the GitHub Copilot volume. Pipeline, scripts and tests:
+> This is the ticket-graph case study within Session 2 of the GitHub Copilot volume. Pipeline, scripts and tests:
 > [`knowledge-graph/`](./knowledge-graph/) (start with its [`README.md`](./knowledge-graph/README.md)).
-> The real output ships in **sanitised** form ([`knowledge-graph/output/`](./knowledge-graph/output/),
-> screenshot [`../presentation/kg_graph.png`](../presentation/kg_graph.png) — 507 nodes · 672 edges · 35
-> communities): tickets `TKT-1xx` / `CHG-1xx`, clients and funds `ClientB`…`ClientV`, as in the Pi volume.
+> The bundled `knowledge-graph/output/` is an older sanitised snapshot (507 nodes · 672 edges · 35
+> communities). The deck screenshot [`../presentation/kg_graph.png`](../presentation/kg_graph.png) is a
+> newer topology-only render from ILS_2 (3,921 nodes · 8,508 links · 178 communities · 73 hyperedges).
+> Labels and metadata are omitted; the current source graph contains internal identifiers and must not be
+> copied into this course repository.
 
 It complements CodeGraph rather than replacing it: **CodeGraph = the *what/how* of the code** (symbols,
 calls, blast radius); **this graph = the *why* and the *what broke before*** (which tickets touch an area,

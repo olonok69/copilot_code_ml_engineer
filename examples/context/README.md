@@ -55,4 +55,4 @@ chat input shows the token count, a breakdown and AI credits.
 6. **Targeted reads** — CodeGraph first ([`../codegraph/`](../codegraph/)): one call with signal beats ten whole files.
 7. **New session between unrelated tasks** — and compact deliberately, not at random.
 
-**Link to Part 2:** the CodeGraph → Serena → text-search prevalence is a context-management policy.
+**Link to Session 2:** the CodeGraph → Serena → text-search prevalence is a context-management policy.

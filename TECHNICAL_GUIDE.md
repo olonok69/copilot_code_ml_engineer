@@ -1,4 +1,4 @@
-# GitHub Copilot — Technical implementation guide (course in three parts)
+# GitHub Copilot — Technical implementation guide (course in two sessions)
 
 > Copy-paste reference for building each piece. It complements
 > [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) (the narrative thread) with the **how**.
@@ -16,7 +16,7 @@
 
 ## Table of contents
 
-**Part 1 — GitHub Copilot**
+**Session 1 — GitHub Copilot**
 
 0. [Surfaces map (read first)](#0-surfaces-map)
 1. [Install, auth, headless, models, billing](#1-install-auth-headless-models-billing)
@@ -31,14 +31,12 @@
 10. [Hooks](#10-hooks)
 11. [Automation](#11-automation)
 
-**Part 2 — The methodology**
+**Session 2 — The methodology + ticket graph**
 
 12. [The workflow and the real example](#12-methodology)
 13. [The tools: CodeGraph, Serena, GSD](#13-the-methods-tools)
 14. [Transferring the methodology — from Claude Code to Copilot](#14-transferring-the-methodology)
 15. [Machine sync (tarball + S3)](#15-machine-sync)
-
-**Part 3 — The ticket knowledge graph (graphify)**
 
 16. [Ticket knowledge graph](#16-ticket-knowledge-graph)
 
@@ -50,7 +48,7 @@
 
 ---
 
-# PART 1 — GitHub Copilot
+# SESSION 1 — GitHub Copilot
 
 ## 0. Surfaces map
 
@@ -619,7 +617,7 @@ merge.
 
 ---
 
-# PART 2 — The methodology
+# SESSION 2 — The methodology
 
 ## 12. Methodology
 
@@ -832,7 +830,7 @@ the answer is ambiguous it stops and asks.
 
 ---
 
-# PART 3 — The ticket knowledge graph (graphify)
+# SESSION 2 CONTINUED — The ticket knowledge graph (graphify)
 
 ## 16. Ticket knowledge graph
 
@@ -849,10 +847,12 @@ the answer is ambiguous it stops and asks.
 | `build_manifest.py` / `stage_corpus.py` | Enumerate and stage the corpus with provenance-preserving names |
 | `test_kg_*.py` | The bookends are tested — infrastructure, not a one-off |
 
-> **Sanitisation note.** The real graph (507 nodes · 672 edges · 35 communities, 92% `EXTRACTED`) ships in
-> **sanitised** form — the same copy as the Pi volume: tickets `TKT-1xx` / `CHG-1xx`, clients and funds
-> `ClientB`…`ClientV`, generic paths. Interactive view `docs/knowledge-graph/output/graph.html`; deck
-> screenshot [`presentation/kg_graph.png`](./presentation/kg_graph.png).
+> **Sanitisation note.** The interactive graph bundled under `docs/knowledge-graph/output/` is an older,
+> sanitised snapshot (507 nodes · 672 edges · 35 communities). The deck screenshot
+> [`presentation/kg_graph.png`](./presentation/kg_graph.png) is refreshed from the ILS_2 graph snapshot:
+> 3,921 nodes · 8,508 links · 178 communities · 73 hyperedges (94.3% `EXTRACTED` links). It shows
+> topology only; labels and metadata are omitted because the source graph contains internal identifiers.
+> Do not copy the source graph output into this course repository.
 
 ```bash
 kg_refresh.sh prepare        # manifest -> stage _corpus/ -> scratch OUTSIDE the repo

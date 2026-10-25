@@ -1,4 +1,4 @@
-# GitHub Copilot — Speaker guide (course in three parts)
+# GitHub Copilot — Speaker guide (course in two sessions)
 
 > Deck: [`presentation/Copilot_Presentation.pptx`](./presentation/Copilot_Presentation.pptx)
 > (regenerate with [`presentation/build_pptx_copilot.py`](./presentation/build_pptx_copilot.py)).
@@ -10,16 +10,14 @@
 > **technical / developers**. This is the **GitHub Copilot volume** of the course. Its siblings are
 > the [Claude Code volume](https://github.com/olonok69/claude_code_ml_engineer) and the
 > [Cursor volume](https://github.com/olonok69/cursor_code_ml_engineer) (the [Pi volume](../pi_code_ml_engineer),
-> built alongside). The structure and the Part 2/3 material are
-> shared across volumes. Part 1 is new.
+> built alongside). The methodology and graph remain distinct topics, but are taught together in Session 2.
 >
-> The deck has **three parts** plus an appendix:
-> - **Part 1 — GitHub Copilot (§00–§11):** five surfaces, two VS Code engines, and the file each
+> The deck has **two sessions** plus an appendix:
+> - **Session 1 — GitHub Copilot (§00–§11):** five surfaces, two VS Code engines, and the file each
 >   surface reads.
-> - **Part 2 — The methodology (§12–§15):** how you actually work with an agent in production. It
+> - **Session 2 — The methodology and ticket graph (§12–§16):** how you actually work with an agent in production. It
 >   does not depend on the tool. It started in Claude Code, moved to Cursor, and now runs on Copilot.
-> - **Part 3 — The ticket knowledge graph (§16):** the same case built with **graphify**, now queried
->   from Copilot.
+>   The graphify case study is the final topic within this same session.
 >
 > **Verification note:** every Copilot claim in this guide comes from
 > [`docs/research/COPILOT_FINDINGS_2026-10-17.md`](./docs/research/COPILOT_FINDINGS_2026-10-17.md),
@@ -35,7 +33,7 @@
 |---|---|---|
 | 1 | Title | — |
 | 2 | Agenda | — |
-| 3 | Part 1 divider | — |
+| 3 | Session 1 divider | — |
 | 4 | “Copilot” is five different surfaces | §00 |
 | 5 | VS Code has two Copilot engines | §00 |
 | 6 | Feature × surface matrix | §00 |
@@ -57,7 +55,7 @@
 | 22 | Hooks: the deterministic veto | §10 |
 | 23 | The portable recipe: block push, PR, merge | §10 |
 | 24 | From copilot -p to agents in the cloud | §11 |
-| 25 | Part 2 divider | — |
+| 25 | Session 2 divider | — |
 | 26 | The real 11-stage flow | §12 |
 | 27 | The outbound gate is FIVE checks | §12 |
 | 28 | Which tool the agent uses, and when | §13 |
@@ -66,12 +64,13 @@
 | 31 | From Claude Code to Copilot | §14 |
 | 32 | New holes — and how merge stays human | §14 |
 | 33 | From transporting (tarball) to sharing (S3) | §15 |
-| 34 | Part 3 divider | — |
+| 34 | Session 2 continued: ticket graph case study | — |
 | 35 | The problem, and the pipeline | §16a |
-| 36 | The real graph: 507 nodes, 35 communities | §16b |
+| 36 | The current graph: 3,921 nodes, 178 communities | §16b |
 | 37 | Using it from Copilot | §16c |
-| 38 | Claude Code → Cursor → Copilot | Appendix |
-| 39 | Close + sources | — |
+| 38 | ILS_2 WSL parity check: verified vs gated | — |
+| 39 | Claude Code → Cursor → Copilot | Appendix |
+| 40 | Close + sources | — |
 
 ---
 
@@ -83,14 +82,14 @@ product.** It is a terminal agent, two different engines inside VS Code, a JetBr
 agent that opens PRs, and a PR reviewer. Most wrong claims about Copilot come from mixing these up.
 
 The agenda (slide 2) uses the section numbers that run through every document in the repo: §00–§11
-in Part 1, §12–§15 in Part 2, §16 in Part 3. When someone asks a question, send them to the same
+in Session 1 and §12–§16 in Session 2. When someone asks a question, send them to the same
 § number in [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md).
 
 🗣️ *"Same method, third agent. This time the hard part isn't the method. It's knowing which Copilot you're talking to."*
 
 ---
 
-# PART 1 — GitHub Copilot
+# SESSION 1 — GitHub Copilot
 
 ## §00 Surfaces map (slides 4–6)
 
@@ -108,7 +107,7 @@ in Part 1, §12–§15 in Part 2, §16 in Part 3. When someone asks a question, 
 - **Copilot code review**: a PR reviewer that rulesets can request automatically.
 - Also: Copilot on github.com (chat, the Agents page, Spaces) and the desktop Copilot app.
 
-**Story (slide 5) — the most important structural fact in Part 1:** VS Code has **two Copilot
+**Story (slide 5) — the most important structural fact in Session 1:** VS Code has **two Copilot
 engines**.
 
 - The **Copilot harness** runs the same runtime as the CLI. It shares `~/.copilot`, the
@@ -271,7 +270,7 @@ repo into context. The exact default window per model is NOT DOCUMENTED in a sin
 
 Material: [`examples/context/`](./examples/context/).
 
-🗣️ *"Compact on purpose, with a focus. Part 2's tool order is really a context policy."*
+🗣️ *"Compact on purpose, with a focus. Session 2's tool order is really a context policy."*
 
 ---
 
@@ -354,6 +353,13 @@ The strongest reason for a skill is still **enforcement**: "pull at the start, p
 in a runbook for months and nobody did it, until it became the `day` skill. Material:
 [`examples/skills-plugins/`](./examples/skills-plugins/), live skills in
 [`.github/skills/`](./.github/skills/).
+
+The reusable methodology pack is at
+[`docs/ai-agents-code-methodology/copilot/skills/`](./docs/ai-agents-code-methodology/copilot/skills/).
+For the live WSL Copilot session, the user confirmed these eight personal skills are visible in
+Copilot Customizations: `day`, `evidence`, `preview`, `atlassian`, `kg`, `kg-refresh`,
+`methodology-plan`, and `sanitise-diff`. Treat this as a discovery check, not proof that every
+remote or production behavior is safe to run; Session 2 states what was and was not tested.
 
 🗣️ *"One SKILL.md works on almost every surface. Name it after its folder, and put it where the CLI can see it."*
 
@@ -448,7 +454,7 @@ The Copilot SDK (npm, pip, Go, .NET, Java) follows `CopilotClient` → `createSe
 
 ---
 
-# PART 2 — The methodology
+# SESSION 2 — The methodology and ticket graph
 
 ## Slide 25 — Divider
 
@@ -601,7 +607,7 @@ Runbooks: [`docs/synchro/`](./docs/synchro/) · scripts:
 
 ---
 
-# PART 3 — The ticket knowledge graph
+# SESSION 2 CONTINUED — The ticket knowledge graph
 
 ## §16 (slides 34–37)
 
@@ -612,9 +618,11 @@ graphify honours `.gitignore` and `data/` is ignored. The agent then does the se
 and `finalize` copies the artifacts back and checks for leaks. The bookends are deterministic and
 tested.
 
-**Story (slide 36):** the real graph: **507 nodes · 672 edges · 35 communities**, 92% `EXTRACTED`.
-The graph and the screenshot ship **sanitised**: tickets are `TKT-1xx` / `CHG-1xx`, clients and funds
-`ClientB`…`ClientV` — the same mapping as the Pi volume. See [`docs/knowledge-graph/`](./docs/knowledge-graph/) and
+**Story (slide 36):** the current graph snapshot has **3,921 nodes · 8,508 links · 178 communities ·
+73 hyperedges**. Link provenance: 94.3% `EXTRACTED`, 5.6% `INFERRED`, and under 0.1% `AMBIGUOUS`.
+The deck image is a topology-only rendering from the current ILS_2 snapshot; labels and metadata are
+omitted because the source graph contains internal identifiers. The interactive graph bundled under
+[`docs/knowledge-graph/`](./docs/knowledge-graph/) remains a separate, older sanitized snapshot. See
 [`docs/KNOWLEDGE_GRAPH.md`](./docs/KNOWLEDGE_GRAPH.md).
 
 **Story (slide 37):** queries use **zero LLM** (`kg_query.sh explain|path|find` reads `graph.json`),
@@ -631,12 +639,29 @@ and they hook into stage 1 (Orient): run `kg` *before* grep. Under Copilot:
 
 ---
 
-## Appendix and close (slides 38–39)
+## WSL parity check (slide 38)
 
-**Slide 38:** the Claude Code → Cursor → Copilot equivalence table. It is the slide to photograph.
+The WSL parity check reports only evidence the other agent actually gathered.
+The eight personal skills were user-confirmed in the active Copilot Customizations view; CodeGraph
+CLI and a bounded MCP query worked in the target repo; the evidence and Atlassian test suites ran
+against offline/mocked fixtures. The active course-repo Copilot MCP view was separately confirmed
+to show CodeGraph and Context7. Do not collapse these into one claim about every target-repo surface.
+
+The check deliberately did **not** run real preview work (no approved fixture), evidence fetches,
+authenticated Atlassian reads, or shared `day` / `kg-refresh` operations. Serena was unavailable;
+Pylance supplied local Python navigation, not a Serena replacement. The slide makes this boundary
+visible instead of claiming full parity.
+
+🗣️ *"Verified means exactly what we ran; gated means not yet proven."*
+
+---
+
+## Appendix and close (slides 39–40)
+
+**Slide 39:** the Claude Code → Cursor → Copilot equivalence table. It is the slide to photograph.
 The longer version is in [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md).
 
-**Slide 39:** eight takeaways, then the sources. Read the date out loud: **verified 2026-10-17;
+**Slide 40:** eight takeaways, then the sources. Read the date out loud: **verified 2026-10-17;
 Copilot moves fast, so re-check before reuse.** Sources: docs.github.com/en/copilot,
 code.visualstudio.com/docs, github.blog/changelog, and the
 [findings file](./docs/research/COPILOT_FINDINGS_2026-10-17.md).

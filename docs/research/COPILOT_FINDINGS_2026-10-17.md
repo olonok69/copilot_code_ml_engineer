@@ -1,8 +1,8 @@
-> **Provenance.** Raw research notes behind Part 1 of this course, copied verbatim except for local paths and
+> **Provenance.** Raw research notes behind Session 1 of this course, copied verbatim except for local paths and
 > machine-specific names (sanitised). Verified **2026-10-17** — Copilot moves fast, re-check before reuse.
 > The raw fetched pages are not redistributed; every claim cites its docs page (`GH:` / `VSC:` prefixes below).
 
-# GitHub Copilot — research findings for "GitHub Copilot — a course in three parts"
+# GitHub Copilot — research findings for "GitHub Copilot — a course in two sessions"
 
 Research date: **2026-10-17**. Every docs.github.com page below was fetched on 2026-10-17 through the docs
 Markdown API (`https://docs.github.com/api/article/body?pathname=<path>`). I did not use rendered HTML.

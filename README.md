@@ -1,4 +1,4 @@
-# GitHub Copilot — A course in three parts (deck + guides)
+# GitHub Copilot — A course in two sessions (deck + guides)
 
 > **The GitHub Copilot volume** of a course series — same course, same method, different tool:
 > [Claude Code](https://github.com/olonok69/claude_code_ml_engineer) ·
@@ -7,12 +7,12 @@
 > [Pi](../pi_code_ml_engineer).
 
 Material for a **course/workshop** on **GitHub Copilot** as an *agent* (not autocomplete): one
-presentation (`.pptx`) in **three parts**, two written guides, a live-demo runbook, and runnable examples.
+presentation (`.pptx`) in **two sessions**, two written guides, a live-demo runbook, and runnable examples.
 Aimed at **developers**. English only. Every Copilot claim was checked against docs.github.com and
 code.visualstudio.com on **17 October 2026**; where the docs are silent or contradict themselves, the
 material says so.
 
-- **Part 1 — GitHub Copilot.** Opens with a **surfaces map**: Copilot CLI (`copilot`, not the retired
+- **Session 1 — GitHub Copilot.** Opens with a **surfaces map**: Copilot CLI (`copilot`, not the retired
   `gh copilot`), VS Code with its two harnesses (Copilot harness = the CLI's runtime; Local harness = classic
   agent mode, with prompt files, handoffs and a different hook schema), JetBrains, the **Copilot cloud agent**
   (formerly "coding agent") and Copilot code review — plus a feature × surface matrix. Then: install, auth,
@@ -20,15 +20,17 @@ material says so.
   memory and instructions (`AGENTS.md`, `.github/copilot-instructions.md`, `.instructions.md` `applyTo`) ·
   permissions, trust and sandbox · sessions · context window · prompt caching (honest: no user control) · MCP
   · skills and plugins · custom agents and subagents · hooks · automation.
-- **Part 2 — The methodology (tool-agnostic):** the 11-stage workflow with gates · tool prevalence
+- **Session 2 — The methodology + ticket graph (tool-agnostic):** the 11-stage workflow with gates · tool prevalence
   (CodeGraph, Serena, GSD and its substitutes) · the transfer — **from Claude Code to Copilot**, with a
   rewritten adaptation guide and a ready-to-copy `.github/` surface · machine sync and the shared engineering
-  record over S3. The outbound gate is **five checks** (validate the instrument · contract via *wrapper* ·
+  record over S3 · the graphify ticket knowledge graph. The outbound gate is **five checks** (validate the instrument · contract via *wrapper* ·
   member list, not totals · deployed image · look at the output). "The human owns merge" is now
   **enforceable** (a committed `preToolUse` hook + cloud-agent limits) — and two new holes are named
   (`/pr automerge`, code-review approvals).
-- **Part 3 — The ticket knowledge graph (graphify):** corpus with manifest, `kg-refresh` pipeline, zero-LLM
-  `kg` query, and how both run under Copilot (CLI subagents / `/fleet`).
+
+Session 1 also points to the reusable methodology skill pack in
+[`docs/ai-agents-code-methodology/copilot/skills/`](./docs/ai-agents-code-methodology/copilot/skills/):
+the skills are demonstrated in Session 1 and exercised safely in Session 2.
 
 ## Naming in this volume
 
@@ -56,7 +58,7 @@ is new in this volume.
 | [`presentation/Copilot_Presentation.pptx`](./presentation/) | The deck (16:9), same visual system as the sibling decks. |
 | [`presentation/build_pptx_copilot.py`](./presentation/build_pptx_copilot.py) | Deck generator (regenerable). |
 | [`examples/`](./examples/) | Runnable artifacts by course section. |
-| [`docs/`](./docs/) | Methodology pack (with the Copilot surface), knowledge-graph pipeline, sync runbooks, and the research notes behind Part 1. |
+| [`docs/`](./docs/) | Methodology pack (with the Copilot surface), knowledge-graph pipeline, sync runbooks, and the research notes behind Session 1. |
 | [`AGENTS.md`](./AGENTS.md) · [`.github/`](./.github/) · [`.mcp.json`](./.mcp.json) | The live Copilot surface of this repo — open it with the CLI or VS Code and try it. |
 
 ## The live surface (this repo)
@@ -71,25 +73,25 @@ is new in this volume.
 
 ## Examples (by course section)
 
-**Part 1:** [`examples/agents-md/`](./examples/agents-md/) (§02) ·
+**Session 1:** [`examples/agents-md/`](./examples/agents-md/) (§02) ·
 [`examples/context/`](./examples/context/) (§05) ·
 [`examples/prompt-caching/`](./examples/prompt-caching/) (§06) ·
 [`examples/mcp/`](./examples/mcp/) (§07) ·
-[`examples/skills-plugins/`](./examples/skills-plugins/) (§08 — incl. `day`, `atlassian`, `evidence`, `preview`; tools in
-[`examples/methodology/tools/`](./examples/methodology/tools/)) ·
+[`examples/skills-plugins/`](./examples/skills-plugins/) (§08 — incl. `day`, `atlassian`, `evidence`, `preview`; methodology skill pack in
+[`docs/ai-agents-code-methodology/copilot/skills/`](./docs/ai-agents-code-methodology/copilot/skills/)) ·
 [`examples/subagents/`](./examples/subagents/) (§09) ·
 [`examples/hooks/`](./examples/hooks/) (§10) ·
 [`examples/permissions/`](./examples/permissions/) (§03) ·
 [`examples/automation/`](./examples/automation/) (§11 — Actions workflow with `copilot -p`, cloud-agent tasks API, SDK).
 
-**Part 2:** [`examples/methodology/`](./examples/methodology/) (workflow, real example, tool prevalence,
+**Session 2:** [`examples/methodology/`](./examples/methodology/) (workflow, real example, tool prevalence,
 machine sync, S3 scripts) · [`examples/codegraph/`](./examples/codegraph/) ·
 [`examples/serena/`](./examples/serena/) · [`examples/gsd/`](./examples/gsd/) ·
 [`docs/ai-agents-code-methodology/`](./docs/ai-agents-code-methodology/) — the portable starter kit:
 [`COPILOT_ADAPTATION.md`](./docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md) + the ready-to-copy surface
 [`copilot/`](./docs/ai-agents-code-methodology/copilot/) · [`docs/synchro/`](./docs/synchro/).
 
-**Part 3:** [`docs/knowledge-graph/`](./docs/knowledge-graph/) · [`docs/KNOWLEDGE_GRAPH.md`](./docs/KNOWLEDGE_GRAPH.md) ·
+Also in **Session 2:** [`docs/knowledge-graph/`](./docs/knowledge-graph/) · [`docs/KNOWLEDGE_GRAPH.md`](./docs/KNOWLEDGE_GRAPH.md) ·
 [`presentation/kg_graph.png`](./presentation/kg_graph.png) (sanitised capture of the real graph).
 
 ## Regenerating the deck and diagrams
@@ -112,14 +114,14 @@ cd docs/knowledge-graph && uv run -q --with pytest python -m pytest -q
 
 | Technology | Role | Documentation |
 |---|---|---|
-| **GitHub Copilot** | The tool (Part 1) | <https://docs.github.com/en/copilot> · CLI reference <https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference> · hooks <https://docs.github.com/en/copilot/reference/hooks-reference> |
+| **GitHub Copilot** | The tool (Session 1) | <https://docs.github.com/en/copilot> · CLI reference <https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference> · hooks <https://docs.github.com/en/copilot/reference/hooks-reference> |
 | **VS Code agents** | Copilot / Local harnesses | <https://code.visualstudio.com/docs/agents/concepts/agent-harnesses> |
 | **MCP** | Connection standard (§07) | <https://modelcontextprotocol.io> |
 | **CodeGraph** | Code graph (§13) | <https://colbymchenry.github.io/codegraph/> |
 | **Serena** | LSP navigation (§13) | <https://github.com/oraios/serena> |
 | **GSD** | Productised method — Claude Code only (§13) | <https://github.com/tomascortereal/claude-code-setup> |
 | **Spec Kit** | Spec-driven templates (third-party coverage only) | <https://github.com/github/spec-kit> |
-| **graphify** | Ticket knowledge graph (Part 3) | <https://graphify.net> |
+| **graphify** | Ticket knowledge graph (Session 2) | <https://graphify.net> |
 | **Context7** | Up-to-date library docs | <https://context7.com> |
 
 ## Sources

@@ -11,7 +11,7 @@ Every Copilot claim here comes from the dated research notes
 UNVERIFIED, so do the examples. Full adaptation guide:
 [`../docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md`](../docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md).
 
-## Index (mapped to Part 1 of the course)
+## Index (mapped to Session 1 of the course)
 
 | Folder | Claude Code topic | Copilot equivalent |
 |---|---|---|

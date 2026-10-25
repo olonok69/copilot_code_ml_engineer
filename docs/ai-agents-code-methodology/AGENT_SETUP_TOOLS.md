@@ -1,4 +1,4 @@
-# AGENT SETUP — day-to-day tools (GitHub Copilot / Part 2)
+# AGENT SETUP — day-to-day tools (GitHub Copilot / Session 2)
 
 > Runbook for setting up the five day-to-day tools in a repo worked with GitHub Copilot.
 > Guides: [`../../TECHNICAL_GUIDE.md`](../../TECHNICAL_GUIDE.md) §7 + §13 ·

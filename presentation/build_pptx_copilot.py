@@ -3,7 +3,7 @@
 
     uv run --with python-pptx --with pillow python presentation/build_pptx_copilot.py
 
-~39 slides, 16:9, in three parts (1 GitHub Copilot · 2 methodology · 3 ticket knowledge graph)
+~40 slides, 16:9, in two sessions (1 GitHub Copilot · 2 methodology and ticket knowledge graph)
 plus an appendix. Section tags (§00–§16) match TECHNICAL_GUIDE.md and SPEAKER_GUIDE.md.
 Adapted from the Cursor volume's `build_pptx_cursor_en.py`: same visual system and components.
 
@@ -41,9 +41,9 @@ BAND = "222B38"     # quote band and highlights
 TEXT = "E8EAED"     # primary text
 MUTED = "9AA4B2"    # secondary text
 DIM = "66707E"      # footer
-ACCENT = "D97757"   # coral — Part 1 and gates
-BLUE = "7AA2C7"     # Part 2
-GREEN = "8CC28C"    # Part 3 and "this is good"
+ACCENT = "D97757"   # coral — Session 1 and gates
+BLUE = "7AA2C7"     # Session 2
+GREEN = "8CC28C"    # positive status and graph accents
 
 UI = "Segoe UI"
 MONO = "Consolas"
@@ -369,15 +369,12 @@ def s_title(prs):
     ], sa=10)
     rect(slide, 1.02, 4.2, 1.4, 0.05, ACCENT)
     tb(slide, 1.0, 4.45, 11.5, 1.7, [
-        [R("PART 1 — ", 15, ACCENT, True),
+        [R("SESSION 1 — ", 15, ACCENT, True),
          R("Copilot: surfaces · CLI & billing · instructions · permissions · context & caching · "
            "MCP · skills · agents · hooks · automation", 13.5, MUTED)],
-        [R("PART 2 — ", 15, BLUE, True),
+        [R("SESSION 2 — ", 15, BLUE, True),
          R("The methodology (tool-agnostic): gated flow · CodeGraph / Serena / GSD · "
-           "transfer from Claude Code · ops (machine-sync + S3)", 13.5, MUTED)],
-        [R("PART 3 — ", 15, GREEN, True),
-         R("The ticket knowledge graph, built with graphify: pipeline, "
-           "skills kg / kg-refresh, and the real graph", 13.5, MUTED)],
+           "transfer from Claude Code · ops (machine-sync + S3) · ticket graph (graphify)", 13.5, MUTED)],
     ], sa=8)
     line(slide, 1.0, 6.7, 11.5, 0.4,
          [R("Course volume 3 (after Claude Code and Cursor; Pi in parallel). Copilot facts "
@@ -385,7 +382,7 @@ def s_title(prs):
 
 
 def s_agenda(prs):
-    slide = chrome(prs, "AGENDA", "One course, three parts", nxt())
+    slide = chrome(prs, "AGENDA", "One course, two sessions", nxt())
 
     def column(x, y0, heading, color, items, step=0.37):
         line(slide, x, y0, 5.85, 0.4, [R(heading, 14, color, True)])
@@ -395,7 +392,7 @@ def s_agenda(prs):
             line(slide, x + 0.25, y + 0.02, 5.5, step - 0.1, [R(text, 11, TEXT)],
                  anchor=MSO_ANCHOR.MIDDLE)
 
-    column(0.7, 1.95, "PART 1 · GitHub Copilot", ACCENT, [
+    column(0.7, 1.95, "SESSION 1 · GitHub Copilot", ACCENT, [
         "§00  Surfaces map + feature matrix",
         "§01  Install · auth · copilot -p · models · billing",
         "§02  Memory & instructions",
@@ -409,21 +406,19 @@ def s_agenda(prs):
         "§10  Hooks",
         "§11  Automation",
     ])
-    column(6.8, 1.95, "PART 2 · The methodology (tool-agnostic)", BLUE, [
+    column(6.8, 1.95, "SESSION 2 · Methodology + ticket graph", BLUE, [
         "§12  The 11-stage flow + five-check gate",
-        "§13  The method's tools",
-        "§14  Transfer: from Claude Code to Copilot",
-        "§15  Ops: machine-sync + S3 record",
-    ])
-    column(6.8, 4.15, "PART 3 · The ticket graph (graphify)", GREEN, [
-        "§16  Pipeline · kg / kg-refresh under Copilot · the real graph",
+        "§13  Tool prevalence: CodeGraph · Serena · GSD",
+        "§14–15  Claude Code transfer · machine sync",
+        "§16  Ticket graph: graphify · kg / kg-refresh",
+        "WSL demo  Skills/tools verified; gated checks stay explicit",
         "Appendix  Claude Code → Cursor → Copilot · Sources",
     ])
 
 
 def s_part1(prs):
     part_divider(
-        prs, "PART 1", "GitHub Copilot",
+        prs, "SESSION 1", "GitHub Copilot",
         "One brand, five surfaces, two VS Code engines — know which one you are talking to.",
         ["§00 · Surfaces map", "§01 · Install, auth, models, billing",
          "§02–§03 · Instructions, permissions", "§04–§06 · Sessions, context, caching",
@@ -434,7 +429,7 @@ def s_part1(prs):
 # --- §00 ------------------------------------------------------------------ #
 
 def s_surfaces(prs):
-    slide = chrome(prs, "PART 1 · §00 · SURFACES MAP", "“Copilot” is five different surfaces", nxt())
+    slide = chrome(prs, "SESSION 1 · §00 · SURFACES MAP", "“Copilot” is five different surfaces", nxt())
     cards = [
         ("›_", "Copilot CLI — copilot",
          "Terminal agent, npm @github/copilot, GA 2026-02-25. NOT the retired `gh copilot` extension."),
@@ -458,7 +453,7 @@ def s_surfaces(prs):
 
 
 def s_harnesses(prs):
-    slide = chrome(prs, "PART 1 · §00 · SURFACES MAP",
+    slide = chrome(prs, "SESSION 1 · §00 · SURFACES MAP",
                    "VS Code has two Copilot engines", nxt())
     line(slide, 4.6, 1.95, 3.7, 0.4, [R("COPILOT HARNESS", 13, BLUE, True)],
          align=PP_ALIGN.CENTER)
@@ -478,7 +473,7 @@ def s_harnesses(prs):
 
 
 def s_matrix(prs):
-    slide = chrome(prs, "PART 1 · §00 · SURFACES MAP", "Feature × surface matrix", nxt())
+    slide = chrome(prs, "SESSION 1 · §00 · SURFACES MAP", "Feature × surface matrix", nxt())
     header = ["Feature", "CLI", "VS Code Copilot", "VS Code Local", "JetBrains", "Cloud agent", "Code review"]
     rows = [
         ["AGENTS.md / copilot-instructions", "✓", "✓", "✓", "~", "✓", "✓"],
@@ -501,7 +496,7 @@ def s_matrix(prs):
 # --- §01 ------------------------------------------------------------------ #
 
 def s_install(prs):
-    slide = chrome(prs, "PART 1 · §01 · INSTALL AND AUTH", "Install, log in, start", nxt())
+    slide = chrome(prs, "SESSION 1 · §01 · INSTALL AND AUTH", "Install, log in, start", nxt())
     label(slide, 0.7, 1.86, 6.0, "Install (pick one)")
     code_block(slide, 0.7, 2.2, 6.0, 2.2, [
         "npm install -g @github/copilot   # Node 22+",
@@ -525,7 +520,7 @@ def s_install(prs):
 
 
 def s_headless(prs):
-    slide = chrome(prs, "PART 1 · §01 · HEADLESS, MODELS, BILLING",
+    slide = chrome(prs, "SESSION 1 · §01 · HEADLESS, MODELS, BILLING",
                    "copilot -p, models, and AI Credits", nxt())
     label(slide, 0.7, 1.86, 7.0, "Headless (scripts / CI)")
     code_block(slide, 0.7, 2.2, 7.0, 2.45, [
@@ -552,7 +547,7 @@ def s_headless(prs):
 # --- §02 ------------------------------------------------------------------ #
 
 def s_memory(prs):
-    slide = chrome(prs, "PART 1 · §02 · MEMORY AND INSTRUCTIONS",
+    slide = chrome(prs, "SESSION 1 · §02 · MEMORY AND INSTRUCTIONS",
                    "The two-level pattern, in Copilot files", nxt())
     card(slide, 0.7, 2.0, 5.85, 3.0, "Level 1 — always loaded (small)", [
         "AGENTS.md at the root — the one file every surface reads",
@@ -575,7 +570,7 @@ def s_memory(prs):
 
 
 def s_loading(prs):
-    slide = chrome(prs, "PART 1 · §02 · MEMORY AND INSTRUCTIONS", "What loads where", nxt())
+    slide = chrome(prs, "SESSION 1 · §02 · MEMORY AND INSTRUCTIONS", "What loads where", nxt())
     rows = [
         (True, "CLI merges everything", "CLAUDE.md, GEMINI.md, AGENTS.md, .instructions.md, .claude/rules, "
          "copilot-instructions — at git root AND cwd"),
@@ -596,7 +591,7 @@ def s_loading(prs):
 # --- §03 ------------------------------------------------------------------ #
 
 def s_permissions(prs):
-    slide = chrome(prs, "PART 1 · §03 · PERMISSIONS", "Allow, deny — and deny wins", nxt())
+    slide = chrome(prs, "SESSION 1 · §03 · PERMISSIONS", "Allow, deny — and deny wins", nxt())
     label(slide, 0.7, 1.86, 6.3, "Pattern syntax: Kind(argument)")
     code_block(slide, 0.7, 2.2, 6.3, 2.5, [
         "--allow-tool='shell(git:*)'",
@@ -624,7 +619,7 @@ def s_permissions(prs):
 
 
 def s_trust(prs):
-    slide = chrome(prs, "PART 1 · §03 · TRUST AND SANDBOX",
+    slide = chrome(prs, "SESSION 1 · §03 · TRUST AND SANDBOX",
                    "Trusted folders, sandbox, cloud guardrails", nxt())
     card(slide, 0.7, 2.0, 3.85, 3.95, "Trusted folders", [
         "Prompt on first launch",
@@ -652,7 +647,7 @@ def s_trust(prs):
 # --- §04 ------------------------------------------------------------------ #
 
 def s_sessions(prs):
-    slide = chrome(prs, "PART 1 · §04 · SESSIONS", "Sessions: resume, fork, rewind, delegate", nxt())
+    slide = chrome(prs, "SESSION 1 · §04 · SESSIONS", "Sessions: resume, fork, rewind, delegate", nxt())
     rows = [
         ("Resume", "copilot --continue · --resume[=ID|name] · /resume — every -p run prints its ID", "CLI"),
         ("Fork / name", "/fork (works while running) · -n NAME · /rename · /worktree", "CLI"),
@@ -670,7 +665,7 @@ def s_sessions(prs):
 # --- §05 ------------------------------------------------------------------ #
 
 def s_context(prs):
-    slide = chrome(prs, "PART 1 · §05 · CONTEXT WINDOW",
+    slide = chrome(prs, "SESSION 1 · §05 · CONTEXT WINDOW",
                    "Context window: the resource that governs everything", nxt())
     rows = [
         ("System prompt", "Hidden — always first", "fixed"),
@@ -700,7 +695,7 @@ def s_context(prs):
 
 
 def s_hygiene(prs):
-    slide = chrome(prs, "PART 1 · §05 · CONTEXT WINDOW",
+    slide = chrome(prs, "SESSION 1 · §05 · CONTEXT WINDOW",
                    "Context hygiene: maximum signal per token", nxt())
     cards = [
         ("1", "Small, stable instructions",
@@ -720,13 +715,13 @@ def s_hygiene(prs):
         x = 0.7 if i % 2 == 0 else 6.815
         y = 2.0 + 1.46 * (i // 2)
         num_card(slide, x, y, 5.835, 1.18, badge, title, desc, 0.63)
-    quote(slide, "Part 2's tool prevalence is, at bottom, context policy.")
+    quote(slide, "Session 2's tool prevalence is, at bottom, context policy.")
 
 
 # --- §06 ------------------------------------------------------------------ #
 
 def s_caching(prs):
-    slide = chrome(prs, "PART 1 · §06 · PROMPT CACHING",
+    slide = chrome(prs, "SESSION 1 · §06 · PROMPT CACHING",
                    "Caching: the honest answer — no knob, real bill", nxt())
     rows = [
         (False, "A cache_control / TTL setting",
@@ -750,7 +745,7 @@ def s_caching(prs):
 # --- §07 ------------------------------------------------------------------ #
 
 def s_mcp(prs):
-    slide = chrome(prs, "PART 1 · §07 · MCP", "One protocol, four config files", nxt())
+    slide = chrome(prs, "SESSION 1 · §07 · MCP", "One protocol, four config files", nxt())
     rows = [
         ("CLI user", "~/.copilot/mcp-config.json — mcpServers; copilot mcp add", "user"),
         ("CLI / Copilot harness", ".mcp.json or .github/mcp.json — mcpServers, needs folder trust", "repo"),
@@ -769,7 +764,7 @@ def s_mcp(prs):
 
 
 def s_mcp_gotchas(prs):
-    slide = chrome(prs, "PART 1 · §07 · MCP", "MCP gotchas per surface", nxt())
+    slide = chrome(prs, "SESSION 1 · §07 · MCP", "MCP gotchas per surface", nxt())
     cards = [
         ("Pw", "Built-ins in the CLI",
          "github-mcp-server (read-heavy), playwright, fetch, time. Don't configure Playwright twice."),
@@ -794,7 +789,7 @@ def s_mcp_gotchas(prs):
 # --- §08 ------------------------------------------------------------------ #
 
 def s_skills(prs):
-    slide = chrome(prs, "PART 1 · §08 · SKILLS AND PLUGINS",
+    slide = chrome(prs, "SESSION 1 · §08 · SKILLS AND PLUGINS",
                    "Skills: one SKILL.md, most surfaces", nxt())
     label(slide, 0.7, 1.86, 6.0, "Where Copilot looks")
     code_block(slide, 0.7, 2.2, 6.0, 2.45, [
@@ -812,9 +807,9 @@ def s_skills(prs):
         "drop trigger: — not a Copilot key",
         "Invoke: /name, or automatic by description",
     ], BLUE, 1.95, size=11)
-    card(slide, 0.7, 4.85, 11.95, 1.35, "Plugins & marketplace", [
-        "copilot plugin install NAME@MARKETPLACE · built-in awesome-copilot · reads .claude-plugin/ "
-        "· repo-declared via enabledPlugins in .github/copilot/settings.json",
+    card(slide, 0.7, 4.85, 11.95, 1.35, "Methodology skills · visible in the live WSL Copilot session", [
+        "day · evidence · preview · atlassian · kg · kg-refresh · methodology-plan · sanitise-diff",
+        "Personal skill set confirmed in Copilot Customizations; see session 2 for safe behavior checks.",
     ], GREEN, 0.5, size=11)
     quote(slide, "The strongest reason for a skill is enforcement: a routine you can call leaves a trace.")
 
@@ -822,7 +817,7 @@ def s_skills(prs):
 # --- §09 ------------------------------------------------------------------ #
 
 def s_agents(prs):
-    slide = chrome(prs, "PART 1 · §09 · CUSTOM AGENTS",
+    slide = chrome(prs, "SESSION 1 · §09 · CUSTOM AGENTS",
                    "Custom agents: .github/agents/*.agent.md", nxt())
     label(slide, 0.7, 1.86, 5.85, "A read-only scout")
     code_block(slide, 0.7, 2.2, 5.85, 2.55, [
@@ -851,7 +846,7 @@ def s_agents(prs):
 
 
 def s_parallel(prs):
-    slide = chrome(prs, "PART 1 · §09 · SUBAGENTS",
+    slide = chrome(prs, "SESSION 1 · §09 · SUBAGENTS",
                    "Subagent, /fleet, or cloud agent?", nxt())
     picture_or_note(slide, HERE.parent / "examples" / "subagents" / "agents.png",
                     0.7, 1.95, 6.2, 3.05,
@@ -875,7 +870,7 @@ def s_parallel(prs):
 # --- §10 ------------------------------------------------------------------ #
 
 def s_hooks(prs):
-    slide = chrome(prs, "PART 1 · §10 · HOOKS", "Hooks: the deterministic veto", nxt())
+    slide = chrome(prs, "SESSION 1 · §10 · HOOKS", "Hooks: the deterministic veto", nxt())
     card(slide, 0.7, 1.95, 5.85, 3.25, "The contract (CLI + cloud agent)", [
         ".github/hooks/*.json — {version: 1, hooks: {preToolUse: […]}}",
         "Also read: ~/.copilot/hooks, .claude/settings.json hooks",
@@ -902,7 +897,7 @@ def s_hooks(prs):
 
 
 def s_hook_recipe(prs):
-    slide = chrome(prs, "PART 1 · §10 · HOOKS",
+    slide = chrome(prs, "SESSION 1 · §10 · HOOKS",
                    "The portable recipe: block push, PR, merge", nxt())
     steps = [
         ("1", "One script, both payload shapes",
@@ -928,7 +923,7 @@ def s_hook_recipe(prs):
 # --- §11 ------------------------------------------------------------------ #
 
 def s_automation(prs):
-    slide = chrome(prs, "PART 1 · §11 · AUTOMATION", "From copilot -p to agents in the cloud", nxt())
+    slide = chrome(prs, "SESSION 1 · §11 · AUTOMATION", "From copilot -p to agents in the cloud", nxt())
     cards = [
         ("a", "copilot -p in Actions",
          "npm i -g @github/copilot · copilot-requests: write · --trust-folder · minimal --allow-tool."),
@@ -953,21 +948,22 @@ def s_automation(prs):
     quote(slide, "In CI, write the allow-list on the command line — the trust prompt will never appear.")
 
 
-# --- PART 2 ---------------------------------------------------------------- #
+# --- SESSION 2 ------------------------------------------------------------- #
 
 def s_part2(prs):
     part_divider(
-        prs, "PART 2", "The methodology",
-        "Tool-agnostic: born in Claude Code, ported to Cursor, now running on Copilot.",
+        prs, "SESSION 2", "The methodology + ticket graph",
+        "One practical session: workflow, tools, transfer, operations, and graph-backed project memory.",
         ["§12 · The 11-stage flow + five-check gate",
          "§13 · The method's tools",
          "§14 · Transfer: from Claude Code to Copilot",
-         "§15 · Ops: machine-sync + shared record (S3)"],
+         "§15 · Ops: machine-sync + shared record (S3)",
+         "§16 · Ticket graph: graphify, kg / kg-refresh"],
         nxt())
 
 
 def s_flow(prs):
-    slide = chrome(prs, "PART 2 · §12 · THE METHODOLOGY", "The real 11-stage flow", nxt())
+    slide = chrome(prs, "SESSION 2 · §12 · THE METHODOLOGY", "The real 11-stage flow", nxt())
     picture_or_note(slide, HERE.parent / "examples" / "methodology" / "flow.png",
                     0.7, 1.95, 3.3, 4.2, "11-stage flow diagram (examples/methodology/flow.mmd).")
     steps = [
@@ -995,7 +991,7 @@ def s_flow(prs):
 
 
 def s_gate(prs):
-    slide = chrome(prs, "PART 2 · §12 · THE METHODOLOGY",
+    slide = chrome(prs, "SESSION 2 · §12 · THE METHODOLOGY",
                    "The outbound gate is FIVE checks", nxt())
     rows = [
         ("0 · Instrument", "Run every _diag_/_sweep_ against a KNOWN-ANSWER case first; record it"),
@@ -1016,7 +1012,7 @@ def s_gate(prs):
 
 
 def s_prevalence(prs):
-    slide = chrome(prs, "PART 2 · §13 · METHOD TOOLS", "Which tool the agent uses, and when", nxt())
+    slide = chrome(prs, "SESSION 2 · §13 · METHOD TOOLS", "Which tool the agent uses, and when", nxt())
     line(slide, 0.7, 1.9, 11.95, 0.5, [
         R("Lives in .github/instructions/01-tool-prevalence.instructions.md: ", 12, MUTED),
         R("cheap → expensive, deterministic → probabilistic.", 12, TEXT, True),
@@ -1035,7 +1031,7 @@ def s_prevalence(prs):
 
 
 def s_cg_serena(prs):
-    slide = chrome(prs, "PART 2 · §13 · METHOD TOOLS",
+    slide = chrome(prs, "SESSION 2 · §13 · METHOD TOOLS",
                    "CodeGraph + Serena on every Copilot surface", nxt())
     grid(slide, 0.7, 1.95, 2.85, 0.56,
          ["Server", "CLI + Copilot harness", "VS Code Local", "Cloud agent"],
@@ -1055,7 +1051,7 @@ def s_cg_serena(prs):
 
 
 def s_gsd(prs):
-    slide = chrome(prs, "PART 2 · §13 · METHOD TOOLS",
+    slide = chrome(prs, "SESSION 2 · §13 · METHOD TOOLS",
                    "GSD: Claude Code only — the Copilot substitutes", nxt())
     card(slide, 0.7, 2.0, 5.85, 3.3, "What GSD is", [
         "Claude Code plugin: phased project management",
@@ -1076,7 +1072,7 @@ def s_gsd(prs):
 
 
 def s_transfer(prs):
-    slide = chrome(prs, "PART 2 · §14 · TRANSFER",
+    slide = chrome(prs, "SESSION 2 · §14 · TRANSFER",
                    "From Claude Code to Copilot", nxt())
     card(slide, 0.7, 2.0, 5.85, 2.75, "Travels UNCHANGED (the 5 rules)", [
         "Plan → agree → implement",
@@ -1102,7 +1098,7 @@ def s_transfer(prs):
 
 
 def s_holes(prs):
-    slide = chrome(prs, "PART 2 · §14 · TRANSFER",
+    slide = chrome(prs, "SESSION 2 · §14 · TRANSFER",
                    "New holes — and how merge stays human", nxt())
     rows = [
         (False, "CLI /pr create | auto | automerge",
@@ -1124,7 +1120,7 @@ def s_holes(prs):
 
 
 def s_ops(prs):
-    slide = chrome(prs, "PART 2 · §15 · OPS",
+    slide = chrome(prs, "SESSION 2 · §15 · OPS",
                    "From transporting (tarball) to sharing (S3)", nxt())
     card(slide, 0.7, 2.0, 5.85, 2.55, "A · Bring-up: tarball + USB", [
         "Outbound = full copy; inbound = data/ delta only",
@@ -1145,12 +1141,12 @@ def s_ops(prs):
     quote(slide, "A rule in a runbook decays silently; a routine you call leaves a trace.")
 
 
-# --- PART 3 ---------------------------------------------------------------- #
+# --- SESSION 2 · GRAPH CASE STUDY ----------------------------------------- #
 
 def s_part3(prs):
     part_divider(
-        prs, "PART 3", "The ticket graph",
-        "A full case built with graphify — project memory, queryable from Copilot.",
+        prs, "SESSION 2 · CONTINUED", "The ticket knowledge graph",
+        "The graph is the case study inside this session—not a separate session.",
         ["§16a · Problem and pipeline",
          "§16b · The real graph, visualized",
          "§16c · Usage under Copilot (kg / kg-refresh)",
@@ -1159,7 +1155,7 @@ def s_part3(prs):
 
 
 def s_kg_pipeline(prs):
-    slide = chrome(prs, "PART 3 · §16A · TICKET GRAPH",
+    slide = chrome(prs, "SESSION 2 · §16A · TICKET GRAPH",
                    "The problem, and the pipeline", nxt())
     card(slide, 0.7, 2.0, 5.85, 2.45, "The problem", [
         "Hundreds of writeups, sharp edges, runbooks",
@@ -1188,26 +1184,26 @@ def s_kg_pipeline(prs):
 
 
 def s_kg_graph(prs):
-    slide = chrome(prs, "PART 3 · §16B · TICKET GRAPH",
-                   "The real graph: 507 nodes, 35 communities", nxt())
+    slide = chrome(prs, "SESSION 2 · §16B · TICKET GRAPH",
+                   "The current graph: 3,921 nodes, 178 communities", nxt())
     picture_or_note(slide, KG_IMAGE, 0.7, 1.95, 8.8, 4.95,
-                    "Screenshot of the real graph (redacted).")
+                    "Current graph topology only; node labels and metadata omitted.")
     card(slide, 9.7, 1.95, 2.95, 3.4, "The real output", [
-        "507 nodes · 672 edges",
-        "35 communities",
-        "92% EXTRACTED",
-        "7% INFERRED (0.7)",
-        "116 files, ~196k words",
+        "3,921 nodes · 8,508 links",
+        "178 communities · 73 hyperedges",
+        "94.3% EXTRACTED links",
+        "5.6% INFERRED · <0.1% AMBIGUOUS",
+        "310 source files",
     ], GREEN, 2.5, size=11)
     tb(slide, 9.7, 5.5, 2.95, 0.8, [
-        [R("Sanitised screenshot.", 11, BLUE, True)],
-        [R("The real graph ships sanitised: TKT-1xx tickets, ClientB…ClientV pseudonyms.",
+        [R("Privacy-safe visual.", 11, BLUE, True)],
+        [R("The current graph contains internal labels; only its unlabeled topology is shown.",
            9.5, MUTED)],
     ], ls=1.05)
 
 
 def s_kg_usage(prs):
-    slide = chrome(prs, "PART 3 · §16C · TICKET GRAPH",
+    slide = chrome(prs, "SESSION 2 · §16C · TICKET GRAPH",
                    "Using it from Copilot", nxt())
     label(slide, 0.7, 1.91, 6.35, "Query: ZERO LLM (reads graph.json)")
     code_block(slide, 0.7, 2.25, 6.35, 1.9, [
@@ -1229,6 +1225,32 @@ def s_kg_usage(prs):
     quote(slide, "One semantic step at build time, zero LLM at query time.")
 
 
+def s_replication(prs):
+    slide = chrome(prs, "SESSION 2 · WSL PARITY CHECK",
+                   "What the ILS_2 Copilot check proves—and what it doesn't", nxt())
+    card(slide, 0.7, 1.95, 5.85, 3.5, "Verified safely · 2026-10-25", [
+        "Course-repo Copilot session: 8 personal skills visible",
+        "Course-repo MCP view: CodeGraph + Context7 connected (user-confirmed)",
+        "CodeGraph CLI + bounded MCP query on the target repo",
+        "Evidence: 22 offline tests · Atlassian: 62 mocked tests",
+        "Synthetic methodology-plan and disposable sanitise-diff exercises",
+        "Personal instructions and local MCP; no shared .github changes",
+    ], GREEN, 2.65, size=10.5)
+    card(slide, 6.8, 1.95, 5.85, 3.5, "Gated · not claimed as parity", [
+        "Real preview: designated fixture unavailable; run not performed",
+        "Evidence fetch and authenticated Atlassian reads: not run",
+        "day / kg-refresh: safety gates checked; shared operations not run",
+        "Serena unavailable; Pylance provided local Python navigation",
+        "Skill discovery is not the same as remote end-to-end behavior",
+    ], ACCENT, 2.65, size=10.5)
+    line(slide, 0.7, 5.65, 11.95, 0.55, [
+        R("Scope note: ", 11.5, BLUE, True),
+        R("user confirmed the active course-repo customization view; target-repo results are reported "
+          "separately. Source report stays local under ILS_2/data.", 11, MUTED),
+    ])
+    quote(slide, "Show what passed, name what was gated, and never call an unsafe shortcut a parity test.")
+
+
 def s_equiv(prs):
     slide = chrome(prs, "APPENDIX", "Claude Code → Cursor → Copilot", nxt())
     grid(slide, 0.7, 1.9, 3.15, 0.4, ["Concept", "Claude Code", "Cursor", "GitHub Copilot"], [
@@ -1247,7 +1269,7 @@ def s_equiv(prs):
 
 def s_close(prs):
     slide = chrome(prs, "CLOSE", "From assistant to system, on any surface", nxt())
-    line(slide, 0.7, 1.95, 5.85, 0.4, [R("PART 1 · the tool", 13, ACCENT, True)])
+    line(slide, 0.7, 1.95, 5.85, 0.4, [R("SESSION 1 · the tool", 13, ACCENT, True)])
     left = [
         ("1", "Know the surface", "CLI ≠ gh copilot; two VS Code engines; cloud agent; review."),
         ("2", "Instructions + context", "AGENTS.md everywhere; lean, stable prefix; no cache knob."),
@@ -1256,7 +1278,7 @@ def s_close(prs):
     ]
     for i, (number, title, desc) in enumerate(left):
         summary_card(slide, 0.7, 2.35 + 0.95 * i, number, title, desc, ACCENT)
-    line(slide, 6.8, 1.95, 5.85, 0.4, [R("PART 2 + 3 · the method and the graph", 13, BLUE, True)])
+    line(slide, 6.8, 1.95, 5.85, 0.4, [R("SESSION 2 · the method and the graph", 13, BLUE, True)])
     right = [
         ("5", "The 11-stage flow", "Deterministic gates; five-check outbound gate."),
         ("6", "The method's tools", "CodeGraph · Serena · oracles; GSD → plan mode + /fleet."),
@@ -1286,7 +1308,7 @@ SLIDES = [
     s_hooks, s_hook_recipe,
     s_automation,
     s_part2, s_flow, s_gate, s_prevalence, s_cg_serena, s_gsd, s_transfer, s_holes, s_ops,
-    s_part3, s_kg_pipeline, s_kg_graph, s_kg_usage,
+    s_part3, s_kg_pipeline, s_kg_graph, s_kg_usage, s_replication,
     s_equiv, s_close,
 ]
 

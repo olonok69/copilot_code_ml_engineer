@@ -39,7 +39,7 @@ Typical artifacts in `.planning/`: `PROJECT.md`, `ROADMAP.md`, `PLAN.md`, `VERIF
 
 ## Why it fits the methodology
 
-GSD embodies plan → agree → implement and verify with evidence. The Part 2 project **does not use GSD day to
+GSD embodies plan → agree → implement and verify with evidence. The Session 2 project **does not use GSD day to
 day** (it runs the 11 stages + `data/changes/`). GSD shines in **multi-component greenfield** work; in Copilot,
 replicate its gates with plan mode + `/fleet` + role agents + the `methodology-plan` skill
 ([`../../docs/ai-agents-code-methodology/copilot/skills/methodology-plan/`](../../docs/ai-agents-code-methodology/copilot/skills/methodology-plan/)).

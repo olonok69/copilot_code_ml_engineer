@@ -1,4 +1,4 @@
-# `knowledge-graph/` — the ticket knowledge graph pipeline (Part 3)
+# `knowledge-graph/` — the ticket knowledge graph pipeline (Session 2 case study)
 
 The real, tested pipeline behind the `kg` / `kg-refresh` skills, copied from a production installation and
 sanitised. Narrative: [`../KNOWLEDGE_GRAPH.md`](../KNOWLEDGE_GRAPH.md). Skills:
@@ -18,12 +18,14 @@ sanitised. Narrative: [`../KNOWLEDGE_GRAPH.md`](../KNOWLEDGE_GRAPH.md). Skills:
 
 ## The real output, sanitised
 
-The real graph (**507 nodes · 672 edges · 35 communities**, 92% `EXTRACTED` edges) was built from internal
-ticket write-ups. It ships here in **sanitised** form — the same copy as the sibling Pi volume, with the same
-pseudonym mapping: tickets `TKT-1xx` / `CHG-1xx`, clients and funds `ClientB`…`ClientV`, paths rewritten to a
-generic workspace. [`output/graph.html`](./output/graph.html) is the interactive view;
-[`output/GRAPH_REPORT.md`](./output/GRAPH_REPORT.md) the audit report;
-[`../../presentation/kg_graph.png`](../../presentation/kg_graph.png) the screenshot used in the deck.
+The graph bundled here (**507 nodes · 672 edges · 35 communities**, 92% `EXTRACTED` edges) was built from
+internal ticket write-ups and remains a **sanitised historical snapshot** — the same copy as the sibling
+Pi volume, with ticket/client pseudonyms and generic paths. [`output/graph.html`](./output/graph.html) is
+its interactive view and [`output/GRAPH_REPORT.md`](./output/GRAPH_REPORT.md) its audit report.
+
+The deck image [`../../presentation/kg_graph.png`](../../presentation/kg_graph.png) has been refreshed
+from a newer ILS_2 snapshot (3,921 nodes · 8,508 links · 178 communities · 73 hyperedges). It is a
+topology-only rendering with labels and metadata omitted. The newer source graph is not included here.
 
 ```bash
 bash docs/knowledge-graph/kg_query.sh find letter        # discover node names

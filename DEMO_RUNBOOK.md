@@ -1,4 +1,4 @@
-# DEMO_RUNBOOK — GitHub Copilot presentation (39 slides)
+# DEMO_RUNBOOK — GitHub Copilot presentation (40 slides)
 
 This is the runbook for the **presenter**. Speaker guide: [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) ·
 deck: [`presentation/Copilot_Presentation.pptx`](./presentation/Copilot_Presentation.pptx) ·
@@ -26,6 +26,8 @@ harness, these are picked up:
 | MCP | [`.mcp.json`](./.mcp.json) (`mcpServers`, workspace) | `copilot mcp list` · `/mcp` |
 
 The teaching copies under `examples/**` are **not** loaded until you copy them into `.github/`.
+For Session 1, also point to the reusable personal methodology skills under
+[`docs/ai-agents-code-methodology/copilot/skills/`](./docs/ai-agents-code-methodology/copilot/skills/).
 
 ---
 
@@ -62,8 +64,16 @@ PS=1 bash .github/hooks/test-block-external-git.sh       # also the .ps1 twin
 
 **VS Code:** install the Copilot extension, sign in, open this folder, and pick the **Copilot**
 harness in the Session Target control. For slide 5 you will switch to **Local** to show the
-difference. Open **Chat: Open Customizations** and check that the three skills appear. A missing
-skill means its `name` doesn't match its folder name.
+difference. Open **Chat: Open Customizations** and check that the three repo skills appear; show the
+personal methodology skill pack as a separate live configuration. A missing repo skill may mean its
+`name` doesn't match its folder name.
+
+**WSL two-session setup:** use this course repo for Session 1, then open the user-approved
+`/mnt/d/repos3/ILS_2` WSL workspace for Session 2. Confirm the personal skill list in Copilot
+Customizations and inspect the MCP list in the active window; do not assume course-repo discovery
+proves discovery in the target repo. The 2026-10-25 check verified bounded CodeGraph use and
+offline/mocked skill checks, but left real preview, remote evidence fetch, authenticated Atlassian
+reads, and shared `day` / `kg-refresh` operations gated. Keep those gates closed during the talk.
 
 **Fallback if there is no network or login:** run every demo from the slide captions plus the
 hook test (offline) and `copilot --help` / `copilot help permissions`.
@@ -95,9 +105,10 @@ hook test (offline) and `copilot --help` / `copilot help permissions`.
 | 21 | Subagents / fleet | `/subagents` · optional `/fleet` on a 2-task plan (costs credits). `/delegate` only if you want a live draft PR. |
 | 22–23 | Hooks | Hook demo **H1** (below). |
 | 24 | Automation | Show [`examples/automation/`](./examples/automation/) workflow (`--trust-folder`, explicit allow/deny) — do **not** run the cloud-agent task script live. |
-| 25–33 | Part 2 | Slides + open [`examples/methodology/WORKFLOW.md`](./examples/methodology/WORKFLOW.md), [`docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md`](./docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md). Real-code demos: **R1** (below). |
-| 34–37 | Part 3 | `bash docs/knowledge-graph/kg_query.sh find letter`, then `kg_query.sh TKT-104` against the sanitised real graph (see [`docs/knowledge-graph/`](./docs/knowledge-graph/)). |
-| 38–39 | Appendix, close | — |
+| 25–33 | Session 2 · methodology | Slides + open [`examples/methodology/WORKFLOW.md`](./examples/methodology/WORKFLOW.md), [`docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md`](./docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md). Real-code demos: **R1** (below). |
+| 34–37 | Session 2 · graph case study | `bash docs/knowledge-graph/kg_query.sh find letter`, then `kg_query.sh TKT-104` against the sanitised real graph (see [`docs/knowledge-graph/`](./docs/knowledge-graph/)). |
+| 38 | Session 2 · parity evidence | Present the verified/gated boundary; do not run real preview, remote fetches, authenticated reads, or shared operations. |
+| 39–40 | Appendix, close | — |
 
 ---
 
@@ -177,8 +188,8 @@ UNVERIFIED.
 | §04–§06 sessions, context, caching | 13–16 | 10 |
 | §07–§09 MCP, skills, agents | 17–21 | 15 |
 | §10–§11 hooks, automation | 22–24 | 10 |
-| Part 2 | 25–33 | 18 |
-| Part 3 + close | 34–39 | 10 |
+| Session 2 · methodology + graph | 25–38 | 25 |
+| Appendix + close | 39–40 | 3 |
 
 For 60 minutes, drop the live demos for 13, 16, 21 and 24 and show the slide only.
 
