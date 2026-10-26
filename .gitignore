@@ -28,3 +28,4 @@ IDENTITY.md
 # The methodology keeps its engineering record under data/ (gitignored by design);
 # the knowledge-graph tests may create data/knowledge-graph/ here.
 data/
+*.pdf
