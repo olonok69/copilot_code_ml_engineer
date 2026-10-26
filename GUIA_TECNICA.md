@@ -153,6 +153,20 @@ descuento en los planes de pago. **Atención: las "premium requests" y los multi
 solo aplican a los planes anuales Pro/Pro+ que se quedaron en el modelo antiguo. Cualquier slide de un
 curso que diga "300 premium requests" está desactualizado.
 
+**Créditos por token (consultado el 2026-10-26, "Models and pricing").** Los precios están en dólares por
+millón de tokens, así que 1 $ por millón de tokens = 100 créditos por millón de tokens. No hay una relación
+fija de créditos por token: depende del modelo y del tipo de token.
+
+| Modelo (tramo por defecto), por millón de tokens | Entrada | Entrada cacheada | Escritura en caché | Salida |
+|---|---|---|---|---|
+| Claude Haiku 5.5 (≤100K de entrada) | 0,10 $ = 10 cr | 0,01 $ = 1 cr | 0,125 $ = 12,5 cr | 0,50 $ = 50 cr |
+| Claude Sonnet 5.5 (por defecto en la CLI) | 2,00 $ = 200 cr | 0,10 $ = 10 cr | 2,50 $ = 250 cr | 10,00 $ = 1.000 cr |
+| Claude Opus 5.5 | 4,00 $ = 400 cr | 0,20 $ = 20 cr | 5,00 $ = 500 cr | 20,00 $ = 2.000 cr |
+
+Ejemplo (Sonnet 5.5): 50.000 tokens de entrada + 5.000 de salida = 10 + 5 = 15 créditos (0,15 $); si
+40.000 de los tokens de entrada salen de la caché, unos 7,4 créditos. Los créditos mensuales que no se
+usan no pasan al mes siguiente.
+
 ---
 
 ## 2. Memoria e instrucciones
@@ -233,6 +247,10 @@ canónica se queda en ledgers versionados.
 ---
 
 ## 3. Permisos, confianza, sandbox
+
+Qué partes tienen un ejemplo en el repo y cuáles no (aprobaciones guardadas, carpetas de confianza, ajustes
+de sandbox de la CLI, ajustes gestionados, firewall del cloud agent): ver la tabla de
+[`GUIA_PRESENTACION.md` §03](./GUIA_PRESENTACION.md#03-permisos-confianza-sandbox-slides-1112).
 
 ### Patrones de la CLI: `Tipo(argumento)`
 

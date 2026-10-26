@@ -161,10 +161,36 @@ copilot -p '...' --max-ai-credits=5      # límite blando por respuesta
 `--model`, `COPILOT_MODEL` o `/model`. `auto` deja que Copilot elija, con un 10% de descuento en los
 planes de pago.
 
-**La facturación cambió el 2026-06-01** a **GitHub AI Credits** (1 crédito = 0,01 $). El coste es por
-token, y **también se facturan los tokens de entrada cacheada y de escritura en caché**. Las "premium
-requests" y los multiplicadores son legado. Solo aplican a los planes anuales Pro/Pro+ que se
-quedaron en el modelo antiguo. Las completions de código no se facturan.
+**La facturación cambió el 2026-06-01** a **GitHub AI Credits**. Las "premium requests" y los
+multiplicadores son legado. Solo aplican a los planes anuales Pro/Pro+ que se quedaron en el modelo
+antiguo. Las completions de código y las sugerencias de next-edit no se facturan.
+
+**Cómo se relaciona un crédito con un token.** No existe una equivalencia fija del tipo "un crédito =
+N tokens". Cada modelo tiene un precio en dólares **por cada millón de tokens**, con cuatro tarifas
+distintas: entrada, entrada cacheada, escritura en caché y salida. **1 AI credit = 0,01 $**, así que
+una tarifa de 1 $ por millón de tokens cuesta 100 créditos por millón de tokens. Por eso el mismo
+prompt cuesta un número distinto de créditos en cada modelo, y los tokens de salida cuestan mucho más
+que los de entrada.
+
+| Modelo (tramo por defecto) | Entrada | Entrada cacheada | Escritura en caché | Salida |
+|---|---|---|---|---|
+| Claude Haiku 5.5 (≤100K de entrada) | 0,10 $ = 10 créditos | 0,01 $ = 1 crédito | 0,125 $ = 12,5 créditos | 0,50 $ = 50 créditos |
+| Claude Sonnet 5.5 (por defecto en la CLI) | 2,00 $ = 200 créditos | 0,10 $ = 10 créditos | 2,50 $ = 250 créditos | 10,00 $ = 1.000 créditos |
+| Claude Opus 5.5 | 4,00 $ = 400 créditos | 0,20 $ = 20 créditos | 5,00 $ = 500 créditos | 20,00 $ = 2.000 créditos |
+
+*Por cada millón de tokens. Fuente: docs.github.com, "Models and pricing", consultado el 2026-10-26.*
+
+Ejemplo con Claude Sonnet 5.5: un turno que lee 50.000 tokens de entrada y escribe 5.000 de salida
+cuesta 50.000 × 200 / 1M + 5.000 × 1.000 / 1M = 10 + 5 = **15 créditos (0,15 $)**. Si 40.000 de esos
+tokens de entrada salen de la caché, la parte de entrada baja a 10.000 × 200 / 1M + 40.000 × 10 / 1M =
+2,4 créditos, y el turno cuesta unos **7,4 créditos**. Por eso §06 insiste en mantener estable el
+prefijo.
+
+Asignación mensual: Pro (10 $) 1.500 créditos, Pro+ (39 $) 7.000, Max (100 $) 20.000. Los créditos que
+no se usan no pasan al mes siguiente. Los 1.500 créditos de Pro dan para unos 100 turnos como el del
+ejemplo. La selección automática de modelo (`auto`) tiene un 10% de descuento en los planes de pago.
+Para vigilar el gasto: `/usage` en la CLI, `--max-ai-credits` por respuesta y el panel de uso de
+github.com.
 
 **Frase de cierre:** *"La CLI es `copilot`, y se paga en AI Credits. Si un slide dice 'premium requests', es del año pasado."*
 
@@ -212,32 +238,74 @@ Material: [`examples/agents-md/`](./examples/agents-md/).
 
 ## §03 Permisos, confianza, sandbox (slides 11–12)
 
-**Hilo (slide 11):** Los permisos de la CLI siguen el patrón `Tipo(argumento)`: `shell(git:*)`,
-`shell(git push)`, `write(src/*.ts)`, `read(.env)`, `MyMCP(tool)`, `url(github.com)`. **Deny siempre
-gana a allow**, incluso con `--yolo`. Los flags nunca se guardan. Las aprobaciones que guardas viven en
-`~/.copilot/permissions-config.json`.
+El mensaje de los dos slides: Copilot tiene **varias capas independientes**, y cada una frena una cosa
+distinta. El slide 11 trata de *qué herramientas pueden ejecutarse*; el slide 12, de *qué llega a
+cargarse* y *a qué puede acceder el proceso*.
 
-Después, el dato clave: **el repo no puede contener una lista allow/deny.**
-`.github/copilot/settings.json` solo acepta una lista corta de claves. Las reglas `permissions.*`
-existen únicamente como ajustes gestionados por la empresa o por MDM. Así que una regla de equipo
-como "nunca hagas push" tiene que ser un **hook** (§10). VS Code tiene el mismo hueco: una regla de
-auto-aprobación de terminal en `false` solo *pide* aprobación. Para bloquear, la documentación remite
-a un hook de denegación `PreToolUse`. `permissions.disableBypassPermissionsMode` puede desactivar
-`--yolo`.
+**Hilo (slide 11): allow, deny, y deny gana.**
 
-**Hilo (slide 12):** tres capas:
+1. **Cómo se escribe una regla.** Los permisos de la CLI siguen el patrón `Tipo(argumento)`:
 
-- **Carpetas de confianza.** La confianza controla los hooks del repo, el MCP del workspace, los
-  plugins del repo y el modelo del repo. En modo `-p`, una carpeta sin confianza **los omite en
-  silencio** salvo que pases `--trust-folder` (o definas las variables
-  `GITHUB_COPILOT_PROMPT_MODE_*`).
-- **Sandbox local.** GA desde el 2026-10-07: `/sandbox enable` o `--sandbox`. Controla los hosts de
-  red, las rutas denegadas y el enmascarado de credenciales por host. Un repo no puede sobrescribirlo.
-- **Cloud agent.** Todas las herramientas están preaprobadas, y un hook que responde `"ask"` cuenta
-  como `"deny"`. El agente solo hace push a su rama `copilot/`. No puede marcar un PR como listo, ni
-  aprobarlo, ni hacer merge. Las ejecuciones de workflows las aprueban personas.
+   | Tipo | Ejemplo | Qué cubre |
+   |---|---|---|
+   | `shell` | `shell(git:*)` | `git` con cualquier subcomando (`:*` = la raíz del comando más un espacio) |
+   | `shell` | `shell(git push)`, `shell(gh pr)` | en `git` y `gh`, el subcomando de primer nivel |
+   | `write` / `read` | `write(src/*.ts)`, `read(.env)` | edición / lectura de ficheros |
+   | `url` | `url(github.com)` | peticiones web a ese host |
+   | MCP | `MyMCP(tool)`, `MyMCP` | una herramienta de un servidor, o el servidor entero |
 
-Material: [`examples/permissions/`](./examples/permissions/).
+2. **Cómo se decide.** Si una llamada coincide con una regla deny, se rechaza. Si coincide con una
+   regla allow y con ninguna deny, se ejecuta sin preguntar. Todo lo demás te pregunta (`y`, `n`, `!`
+   para permitir llamadas parecidas durante la sesión, `#` para denegarlas). **Deny siempre gana a
+   allow**, incluso con `--allow-all` / `--yolo` o con una aprobación guardada.
+3. **Dónde viven las reglas.** Los flags (`--allow-tool`, `--deny-tool`) duran una ejecución y nunca se
+   guardan. Las aprobaciones que guardas en el aviso van a `~/.copilot/permissions-config.json`, por
+   usuario y por máquina. Las reglas `permissions.deny/allow` para toda la organización existen
+   **solo** como ajustes gestionados por la empresa o por MDM.
+4. **El dato clave: el repo no puede contener una lista allow/deny.** `.github/copilot/settings.json`
+   acepta una lista corta de claves e ignora el resto en silencio. Así que una regla de equipo como
+   "nunca hagas push" que quieras subir al repo tiene que ser un **hook** (§10).
+   `permissions.disableBypassPermissionsMode` (usuario, gestionado o MDM) puede desactivar `--yolo`.
+5. **En VS Code es lo mismo con otros nombres.** `chat.permissions.default` vale Manual, Assisted o
+   Allow all, y `chat.tools.terminal.autoApprove` lista comandos como `true` / `false`. Una regla en
+   `false` solo *pide* aprobación; no bloquea. Para bloquear, la documentación remite a un hook de
+   denegación `PreToolUse`.
+
+**Hilo (slide 12): tres capas más.**
+
+- **Carpetas de confianza: qué se carga.** En el primer arranque dentro de una carpeta, la CLI pregunta
+  si confías en ella (para esta sesión o para las siguientes; la lista es `trustedFolders` en
+  `~/.copilot/config.json`). La confianza controla **los hooks del repo, el MCP del workspace
+  (`.mcp.json`), los plugins del repo y el modelo del repo**. En modo `-p`, una carpeta sin confianza
+  **los omite en silencio** salvo que pases `--trust-folder` (o definas las variables
+  `GITHUB_COPILOT_PROMPT_MODE_*`). Así es como una puerta de CI basada en un hook del repo acaba sin
+  hacer nada.
+- **Sandbox local: a qué puede acceder el proceso.** GA desde el 2026-10-07: `/sandbox enable`,
+  `--sandbox`, o `sandbox.enabled` en `~/.copilot/settings.json`. Limita los hosts de red
+  (`sandbox.userPolicy.network.allowedHosts|blockedHosts`), deniega rutas
+  (`sandbox.userPolicy.filesystem.deniedPaths`) y enmascara credenciales: el proceso ve un marcador y
+  el proxy inyecta el secreto real solo hacia los hosts que indiques. Vive en los ajustes del usuario,
+  así que un repo no puede sobrescribirlo.
+- **Cloud agent: límites estructurales.** Todas las herramientas están preaprobadas, y un hook que
+  responde `"ask"` cuenta como `"deny"`. El agente solo hace push a su rama `copilot/`. No puede marcar
+  un PR como listo, ni aprobarlo, ni hacer merge. Las ejecuciones de workflows las aprueban personas. La
+  red la limita el firewall de "Internet access" en los ajustes del repo.
+
+**Ejemplos en este repo, y lo que falta:**
+
+| Tema | Ejemplo | Estado |
+|---|---|---|
+| Flags allow/deny de la CLI | [`examples/permissions/copilot-cli-flags.sh`](./examples/permissions/copilot-cli-flags.sh) | Script ilustrativo, contrastado con la referencia de la CLI; no se ha ejecutado contra una CLI real. |
+| Demo de allow/deny en headless | [`DEMO_RUNBOOK_ES.md` D1](./DEMO_RUNBOOK_ES.md#d1--allowdeny-en-headless-slide-11) | Demo para hacer en directo. |
+| `--trust-folder` en CI | [`examples/automation/copilot-cli-action.yml`](./examples/automation/copilot-cli-action.yml) | Ejemplo de workflow; no se ha ejecutado en este repo. |
+| Veto por contenido (hook) | [`.github/hooks/block-external-git.json`](./.github/hooks/block-external-git.json), [`examples/hooks/deny-env-read.json`](./examples/hooks/deny-env-read.json) | Hook activo; probado offline con `bash .github/hooks/test-block-external-git.sh`. |
+| Auto-aprobación y sandbox en VS Code | [`examples/permissions/.vscode/settings.json.example`](./examples/permissions/.vscode/settings.json.example) | Ajustes de ejemplo. |
+| Referencia completa | [`examples/permissions/README.md`](./examples/permissions/README.md) | Texto (en inglés). |
+| Aprobaciones guardadas (`permissions-config.json`) | **No hay ejemplo en el repo.** | Lo crea la CLI cuando guardas una aprobación. |
+| Carpetas de confianza (`trustedFolders`) | **No hay ejemplo en el repo.** | Se enseña en directo con el aviso del primer arranque. |
+| Sandbox de la CLI (ajustes `sandbox.*`) | **No hay ejemplo de CLI en el repo.** | Solo existe como ejemplo el ajuste de VS Code. |
+| `permissions.deny` gestionado / `disableBypassPermissionsMode` | **No hay ejemplo en el repo.** | Solo empresa / MDM; se menciona en [`COPILOT_WORKING_AGREEMENT_TEMPLATE.md`](./docs/ai-agents-code-methodology/templates/COPILOT_WORKING_AGREEMENT_TEMPLATE.md). |
+| Firewall del cloud agent | **No hay ejemplo en el repo.** | Se configura en la interfaz de ajustes del repo. |
 
 **Frase de cierre:** *"Las allowlists deciden qué se ejecuta sin preguntar. Solo un hook puede vetar por contenido, y en CI el hook solo se carga si confiaste en la carpeta."*
 
