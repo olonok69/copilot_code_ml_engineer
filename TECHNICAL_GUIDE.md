@@ -146,6 +146,19 @@ not billed. Auto model selection: 10% discount on paid plans. ⚠️ **"Premium 
 legacy** — they apply only to annual Pro/Pro+ plans that stayed on the old model. Any course slide that
 says "300 premium requests" is out of date.
 
+**Credits per token (checked 2026-10-26, "Models and pricing").** Prices are in dollars per 1M tokens,
+so $1 per 1M tokens = 100 credits per 1M tokens. There is no fixed credits-per-token ratio: it depends
+on the model and on the token type.
+
+| Model (default tier), per 1M tokens | Input | Cached input | Cache write | Output |
+|---|---|---|---|---|
+| Claude Haiku 5.5 (≤100K input) | $0.10 = 10 cr | $0.01 = 1 cr | $0.125 = 12.5 cr | $0.50 = 50 cr |
+| Claude Sonnet 5.5 (CLI default) | $2.00 = 200 cr | $0.10 = 10 cr | $2.50 = 250 cr | $10.00 = 1,000 cr |
+| Claude Opus 5.5 | $4.00 = 400 cr | $0.20 = 20 cr | $5.00 = 500 cr | $20.00 = 2,000 cr |
+
+Example (Sonnet 5.5): 50,000 input + 5,000 output tokens = 10 + 5 = 15 credits ($0.15); with 40,000 of the
+input tokens served from cache, about 7.4 credits. Unused monthly credits do not carry over.
+
 ---
 
 ## 2. Memory and instructions
@@ -220,6 +233,10 @@ in versioned ledgers.
 ---
 
 ## 3. Permissions, trust, sandbox
+
+Which of these have a runnable example in the repo, and which do not (saved approvals, trusted folders,
+CLI sandbox settings, managed settings, cloud-agent firewall): see the table in
+[`SPEAKER_GUIDE.md` §03](./SPEAKER_GUIDE.md#03-permissions-trust-sandbox-slides-1112).
 
 ### CLI patterns: `Kind(argument)`
 
