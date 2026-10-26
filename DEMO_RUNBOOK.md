@@ -1,5 +1,7 @@
 # DEMO_RUNBOOK — GitHub Copilot presentation (40 slides)
 
+> Versión en español: [`DEMO_RUNBOOK_ES.md`](./DEMO_RUNBOOK_ES.md).
+
 This is the runbook for the **presenter**. Speaker guide: [`SPEAKER_GUIDE.md`](./SPEAKER_GUIDE.md) ·
 deck: [`presentation/Copilot_Presentation.pptx`](./presentation/Copilot_Presentation.pptx) ·
 reference: [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md).

@@ -1,5 +1,7 @@
 # GitHub Copilot — Speaker guide (course in two sessions)
 
+> Versión en español: [`GUIA_PRESENTACION.md`](./GUIA_PRESENTACION.md).
+
 > Deck: [`presentation/Copilot_Presentation.pptx`](./presentation/Copilot_Presentation.pptx)
 > (regenerate with [`presentation/build_pptx_copilot.py`](./presentation/build_pptx_copilot.py)).
 > Copy-paste detail: [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md) · live demos per slide:
