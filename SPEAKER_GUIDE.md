@@ -93,6 +93,8 @@ in Session 1 and §12–§16 in Session 2. When someone asks a question, send th
 
 # SESSION 1 — GitHub Copilot
 
+Each section below ends with the **demos** for its slides: what to run, where it is in [`DEMO_RUNBOOK.md`](./DEMO_RUNBOOK.md), and what it demonstrates. Do the [preflight](./DEMO_RUNBOOK.md#preflight-t-30-min) first. Without network or login, use the runbook's fallback (slide captions, the offline hook test, `copilot --help`).
+
 ## §00 Surfaces map (slides 4–6)
 
 **Story (slide 4):** Name the five surfaces before you say anything else:
@@ -128,6 +130,11 @@ Pick the harness in the **Session Target** control, then read the docs for that 
 
 The full matrix, with a source for every cell, is in the
 [findings file](./docs/research/COPILOT_FINDINGS_2026-10-17.md).
+
+**Demos (slides 4–6), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):**
+- Slide 4: `copilot --version`. Shows that the CLI is `copilot`, not the retired `gh copilot` extension.
+- Slide 5: in VS Code, switch Session Target between **Copilot** and **Local**; a prompt file shows up as `/name` only in Local. Shows that the two engines read different files.
+- Slide 6: open the §2 table of the [findings file](./docs/research/COPILOT_FINDINGS_2026-10-17.md). Shows that every cell of the matrix has a source.
 
 🗣️ *"Before any 'Copilot can / can't' claim, ask two questions: which surface, and which harness?"*
 
@@ -184,6 +191,10 @@ not carry over. Pro's 1,500 credits buy roughly 100 turns like the one above. `a
 takes 10% off on paid plans. To watch spend: `/usage` in the CLI, `--max-ai-credits` per response, and
 the usage dashboard on github.com.
 
+**Demos (slides 7–8), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):**
+- Slide 7: `copilot login --help`. Shows the login options and the order in which token variables are read.
+- Slide 8: `copilot -p "Summarise AGENTS.md in 3 bullets" -s`, then `/usage` in an interactive session. Shows a headless run and what it cost in AI Credits.
+
 🗣️ *"The CLI is `copilot`, and you pay in AI Credits. If a slide says 'premium requests', it's from last year."*
 
 ---
@@ -221,6 +232,10 @@ NOT DOCUMENTED.
    after 28 days. The VS Code `/memories` tool and CLI `/chronicle` are separate systems again.
 
 Material: [`examples/agents-md/`](./examples/agents-md/).
+
+**Demos (slides 9–10), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):**
+- Slide 9: open [`AGENTS.md`](./AGENTS.md), then one of the files it points to. Shows the two-level pattern: a short always-loaded file with pointers.
+- Slide 10: `/instructions` in the CLI. Shows which instruction files were actually loaded (the CLI also reads `CLAUDE.md` and `.claude/rules`).
 
 🗣️ *"`AGENTS.md` is the only file every surface reads. Keep it to a 30-second onboarding: pointers, not copies."*
 
@@ -294,6 +309,10 @@ different thing. Slide 11 is about *which tools may run*; slide 12 is about *wha
 | Managed `permissions.deny` / `disableBypassPermissionsMode` | **No example in the repo.** | Enterprise / MDM only; mentioned in [`COPILOT_WORKING_AGREEMENT_TEMPLATE.md`](./docs/ai-agents-code-methodology/templates/COPILOT_WORKING_AGREEMENT_TEMPLATE.md). |
 | Cloud agent firewall | **No example in the repo.** | Configured in the repo settings UI. |
 
+**Demos (slides 11–12):**
+- Slide 11: [D1, headless allow/deny](./DEMO_RUNBOOK.md#d1--headless-allowdeny-slide-11). Shows that deny beats allow even with `shell(git:*)` allowed, and that without `--trust-folder` the repo hook is skipped in `-p` mode.
+- Slide 12: `copilot help permissions` and, if your build has it, `/sandbox` ([command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide)). Shows the permission topics and sandbox controls; there is no CLI sandbox example in the repo.
+
 🗣️ *"Allowlists decide what runs without asking. Only a hook can veto by content, and in CI the hook loads only if you trusted the folder."*
 
 ---
@@ -311,6 +330,8 @@ different thing. Slide 11 is about *which tools may run*; slide 12 is about *wha
 ⚠️ The "checkpoints" listed by `/session checkpoints` are **compaction summaries**, not file
 snapshots. In VS Code, the Session Target control moves a session between harnesses or to Cloud,
 and the history comes along.
+
+**Demo (slide 13), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):** run a `-p` command, copy the `copilot --resume=…` line it prints and resume it; then `/rewind` a scratch edit. Shows that every headless run can be resumed, and that `/rewind` with files puts the tree back.
 
 🗣️ *"A compaction checkpoint is a summary. Only `/rewind` with files puts your tree back."*
 
@@ -337,6 +358,8 @@ repo into context. The exact default window per model is NOT DOCUMENTED in a sin
 
 Material: [`examples/context/`](./examples/context/).
 
+**Demo (slide 14), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):** `/context`, then `/compact "keep only the hook design"`. Shows where the tokens go and a compaction with a focus. Slide 15 has no demo.
+
 🗣️ *"Compact on purpose, with a focus. Session 2's tool order is really a context policy."*
 
 ---
@@ -359,6 +382,8 @@ What you can do:
 The CLI has no cache view: `/usage` shows tokens and credits only. Whether the OpenTelemetry export
 carries cache attributes is UNVERIFIED. The mechanism demo uses the Anthropic API, not Copilot:
 [`examples/prompt-caching/`](./examples/prompt-caching/).
+
+**Demo (slide 16), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):** in VS Code, Agent Debug Logs → Summary → Cache Explorer (only if your build has it); in the CLI, `/usage`. Shows that caching happens and is billed, but can only be diagnosed, not set.
 
 🗣️ *"You can't set the cache. You can stop breaking it."*
 
@@ -395,6 +420,10 @@ In the CLI and cloud configs, **`tools` is required** (for example `["*"]`). `mc
 Material: [`examples/mcp/`](./examples/mcp/) · the method's set (CodeGraph, Serena, Context7) in
 [`docs/ai-agents-code-methodology/copilot/`](./docs/ai-agents-code-methodology/copilot/).
 
+**Demos (slides 17–18), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):**
+- Slide 17: `copilot mcp list`, then open [`.mcp.json`](./.mcp.json). Shows the required `tools: ["*"]` and that Playwright is not configured because it is built in.
+- Slide 18: ask "use context7 to look up python-pptx `add_picture`". Shows an MCP server being used during a task.
+
 🗣️ *"Config gives the agent the tool. A trigger map in your instructions makes it use the tool."*
 
 ---
@@ -428,6 +457,8 @@ Copilot Customizations: `day`, `evidence`, `preview`, `atlassian`, `kg`, `kg-ref
 `methodology-plan`, and `sanitise-diff`. Treat this as a discovery check, not proof that every
 remote or production behavior is safe to run; Session 2 states what was and was not tested.
 
+**Demo (slide 19):** [S1–S3, skills on the demo targets](./DEMO_RUNBOOK.md#s1s3--skills-on-the-demo-targets): `/audit ex_npm`, `/audit-python ex_app`, `/deploy-staging ex_staging`. Shows skills invoked as `/name`, and a skill that stops for your OK before it deploys.
+
 🗣️ *"One SKILL.md works on almost every surface. Name it after its folder, and put it where the CLI can see it."*
 
 ---
@@ -458,6 +489,10 @@ your build. Live agent: [`.github/agents/refactor-scout.agent.md`](./.github/age
 Concurrency limits depend on the plan (Free 2 · Pro 4 · Max 8 · Business 16 · Enterprise 32).
 **Maximum depth is contradictory in the docs:** the reference table says 6, the env-var table says
 4. Say so out loud. Material: [`examples/subagents/`](./examples/subagents/).
+
+**Demos (slides 20–21), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):**
+- Slide 20: "Use the refactor-scout agent to find every caller of `health` in ex_npm". Shows that the agent's `tools` list keeps it read-only: it must not edit files.
+- Slide 21: `/subagents`, and optionally `/fleet` on a two-task plan (it spends credits). Shows the ways to run work in parallel.
 
 🗣️ *"Use a subagent when you want the noise to stay outside your session. Use the cloud agent when the work is long. The cost is not the same."*
 
@@ -496,6 +531,8 @@ instructions, and test the hook against them on your build.
 
 Material: [`examples/hooks/`](./examples/hooks/).
 
+**Demo (slides 22–23):** [H1, the hook says no](./DEMO_RUNBOOK.md#h1--the-hook-says-no). Ask the agent to `git push`, `gh pr create` and `gh pr merge`: all are denied, while `git status` runs. Shows a deterministic veto that instructions alone cannot give. Offline backup: `bash .github/hooks/test-block-external-git.sh`.
+
 🗣️ *"Instructions ask. A hook guarantees, as long as it answers before the timeout."*
 
 ---
@@ -516,6 +553,8 @@ Material: [`examples/hooks/`](./examples/hooks/).
 
 The Copilot SDK (npm, pip, Go, .NET, Java) follows `CopilotClient` → `createSession` →
 `sendAndWait`, and has programmatic hooks. Material: [`examples/automation/`](./examples/automation/).
+
+**Demo (slide 24), from the [command-per-slide table](./DEMO_RUNBOOK.md#command-per-slide):** show the workflow in [`examples/automation/`](./examples/automation/) without running it, and do not run the cloud-agent task script live. Shows how CI writes the allow-list on the command line (`--trust-folder`, explicit allow/deny).
 
 🗣️ *"In CI there's no human to answer the trust prompt, so write the allow-list on the command line."*
 
