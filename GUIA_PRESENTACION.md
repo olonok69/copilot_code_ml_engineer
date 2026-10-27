@@ -95,6 +95,8 @@ de [`GUIA_TECNICA.md`](./GUIA_TECNICA.md).
 
 # SESIÓN 1 — GitHub Copilot
 
+Cada sección de abajo termina con las **demos** de sus slides: qué ejecutar, dónde está en [`DEMO_RUNBOOK_ES.md`](./DEMO_RUNBOOK_ES.md) y qué demuestra. Haz antes las [comprobaciones previas](./DEMO_RUNBOOK_ES.md#comprobaciones-previas-t-30-min). Sin red o sin poder iniciar sesión, usa el plan B del runbook (textos de los slides, test offline del hook, `copilot --help`).
+
 ## §00 Mapa de superficies (slides 4–6)
 
 **Hilo (slide 4):** Nombra las cinco superficies antes de decir nada más:
@@ -131,6 +133,11 @@ Elige el harness en el control **Session Target** y después lee la documentaci�
 
 La matriz completa, con una fuente para cada celda, está en el
 [fichero de hallazgos](./docs/research/COPILOT_FINDINGS_2026-10-17.md).
+
+**Demos (slides 4–6), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):**
+- Slide 4: `copilot --version`. Demuestra que la CLI es `copilot`, no la extensión retirada `gh copilot`.
+- Slide 5: en VS Code, cambia Session Target entre **Copilot** y **Local**; un prompt file aparece como `/nombre` solo en Local. Demuestra que los dos motores leen ficheros distintos.
+- Slide 6: abre la tabla §2 del [fichero de hallazgos](./docs/research/COPILOT_FINDINGS_2026-10-17.md). Demuestra que cada celda de la matriz tiene una fuente.
 
 **Frase de cierre:** *"Antes de cualquier afirmación del tipo 'Copilot puede / no puede', haz dos preguntas: ¿qué superficie? y ¿qué harness?"*
 
@@ -192,6 +199,10 @@ ejemplo. La selección automática de modelo (`auto`) tiene un 10% de descuento 
 Para vigilar el gasto: `/usage` en la CLI, `--max-ai-credits` por respuesta y el panel de uso de
 github.com.
 
+**Demos (slides 7–8), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):**
+- Slide 7: `copilot login --help`. Demuestra las opciones de inicio de sesión y el orden en que se leen las variables de token.
+- Slide 8: `copilot -p "Summarise AGENTS.md in 3 bullets" -s` y después `/usage` en una sesión interactiva. Demuestra una ejecución headless y cuánto costó en AI Credits.
+
 **Frase de cierre:** *"La CLI es `copilot`, y se paga en AI Credits. Si un slide dice 'premium requests', es del año pasado."*
 
 ---
@@ -231,6 +242,10 @@ expande `@path` o no está NO DOCUMENTADO.
    distintos.
 
 Material: [`examples/agents-md/`](./examples/agents-md/).
+
+**Demos (slides 9–10), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):**
+- Slide 9: abre [`AGENTS.md`](./AGENTS.md) y después uno de los ficheros a los que apunta. Demuestra el patrón de dos niveles: un fichero corto, siempre cargado, con punteros.
+- Slide 10: `/instructions` en la CLI. Demuestra qué ficheros de instrucciones se cargaron de verdad (la CLI también lee `CLAUDE.md` y `.claude/rules`).
 
 **Frase de cierre:** *"`AGENTS.md` es el único fichero que leen todas las superficies. Que sea un onboarding de 30 segundos: punteros, no copias."*
 
@@ -307,6 +322,10 @@ cargarse* y *a qué puede acceder el proceso*.
 | `permissions.deny` gestionado / `disableBypassPermissionsMode` | **No hay ejemplo en el repo.** | Solo empresa / MDM; se menciona en [`COPILOT_WORKING_AGREEMENT_TEMPLATE.md`](./docs/ai-agents-code-methodology/templates/COPILOT_WORKING_AGREEMENT_TEMPLATE.md). |
 | Firewall del cloud agent | **No hay ejemplo en el repo.** | Se configura en la interfaz de ajustes del repo. |
 
+**Demos (slides 11–12):**
+- Slide 11: [D1, allow/deny en headless](./DEMO_RUNBOOK_ES.md#d1--allowdeny-en-headless-slide-11). Demuestra que deny gana a allow aunque `shell(git:*)` esté permitido, y que sin `--trust-folder` el hook del repo se omite en modo `-p`.
+- Slide 12: `copilot help permissions` y, si tu versión lo tiene, `/sandbox` ([tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide)). Demuestra los temas de permisos y los controles del sandbox; no hay ejemplo de sandbox de la CLI en el repo.
+
 **Frase de cierre:** *"Las allowlists deciden qué se ejecuta sin preguntar. Solo un hook puede vetar por contenido, y en CI el hook solo se carga si confiaste en la carpeta."*
 
 ---
@@ -324,6 +343,8 @@ cargarse* y *a qué puede acceder el proceso*.
 **Atención:** los "checkpoints" que lista `/session checkpoints` son **resúmenes de compactación**, no
 instantáneas de ficheros. En VS Code, el control Session Target mueve una sesión entre harnesses o a
 Cloud, y el historial viaja con ella.
+
+**Demo (slide 13), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):** ejecuta un comando `-p`, copia la línea `copilot --resume=…` que imprime y reanúdalo; después haz `/rewind` de una edición de prueba. Demuestra que cualquier ejecución headless se puede reanudar, y que `/rewind` con ficheros devuelve el árbol a su estado anterior.
 
 **Frase de cierre:** *"Un checkpoint de compactación es un resumen. Solo `/rewind` con ficheros devuelve tu árbol a su estado anterior."*
 
@@ -351,6 +372,8 @@ el contexto. La ventana por defecto exacta de cada modelo está NO DOCUMENTADA e
 
 Material: [`examples/context/`](./examples/context/).
 
+**Demo (slide 14), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):** `/context` y después `/compact "keep only the hook design"`. Demuestra a dónde van los tokens y una compactación con foco. El slide 15 no tiene demo.
+
 **Frase de cierre:** *"Compacta a propósito, con un foco. El orden de herramientas de la Sesión 2 es, en realidad, una política de contexto."*
 
 ---
@@ -374,6 +397,8 @@ Lo que sí puedes hacer:
 La CLI no tiene vista de caché: `/usage` solo muestra tokens y créditos. Si la exportación a
 OpenTelemetry lleva atributos de caché está NO VERIFICADO. La demo del mecanismo usa la API de
 Anthropic, no Copilot: [`examples/prompt-caching/`](./examples/prompt-caching/).
+
+**Demo (slide 16), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):** en VS Code, Agent Debug Logs → Summary → Cache Explorer (solo si tu versión lo tiene); en la CLI, `/usage`. Demuestra que el caching ocurre y se factura, pero solo se puede diagnosticar, no configurar.
 
 **Frase de cierre:** *"No puedes configurar la caché. Puedes dejar de romperla."*
 
@@ -411,6 +436,10 @@ En las configuraciones de la CLI y de la nube, **`tools` es obligatorio** (por e
 Material: [`examples/mcp/`](./examples/mcp/) · el conjunto del método (CodeGraph, Serena, Context7) en
 [`docs/ai-agents-code-methodology/copilot/`](./docs/ai-agents-code-methodology/copilot/).
 
+**Demos (slides 17–18), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):**
+- Slide 17: `copilot mcp list` y después abre [`.mcp.json`](./.mcp.json). Demuestra el `tools: ["*"]` obligatorio y que Playwright no está configurado porque viene integrado.
+- Slide 18: pide "use context7 to look up python-pptx `add_picture`". Demuestra un servidor MCP en uso durante una tarea.
+
 **Frase de cierre:** *"La configuración le da la herramienta al agente. Un mapa de disparadores en tus instrucciones hace que la use."*
 
 ---
@@ -446,6 +475,8 @@ en Copilot Customizations: `day`, `evidence`, `preview`, `atlassian`, `kg`, `kg-
 que todo comportamiento remoto o de producción sea seguro de ejecutar; la Sesión 2 dice qué se probó y
 qué no.
 
+**Demo (slide 19):** [S1–S3, skills sobre los objetivos de demo](./DEMO_RUNBOOK_ES.md#s1s3--skills-sobre-los-objetivos-de-demo): `/audit ex_npm`, `/audit-python ex_app`, `/deploy-staging ex_staging`. Demuestra skills invocadas como `/nombre`, y una skill que se detiene a pedir tu OK antes de desplegar.
+
 **Frase de cierre:** *"Un SKILL.md funciona en casi todas las superficies. Ponle el nombre de su carpeta, y déjalo donde la CLI pueda verlo."*
 
 ---
@@ -478,6 +509,10 @@ Los límites de concurrencia dependen del plan (Free 2 · Pro 4 · Max 8 · Busi
 **La profundidad máxima es contradictoria en la documentación:** la tabla de referencia dice 6 y la
 tabla de variables de entorno dice 4. Dilo en voz alta. Material:
 [`examples/subagents/`](./examples/subagents/).
+
+**Demos (slides 20–21), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):**
+- Slide 20: "Use the refactor-scout agent to find every caller of `health` in ex_npm". Demuestra que la lista `tools` del agente lo mantiene en solo lectura: no debe editar ficheros.
+- Slide 21: `/subagents` y, opcionalmente, `/fleet` sobre un plan de dos tareas (gasta créditos). Demuestra las formas de ejecutar trabajo en paralelo.
 
 **Frase de cierre:** *"Usa un subagente cuando quieras que el ruido se quede fuera de tu sesión. Usa el cloud agent cuando el trabajo sea largo. El coste no es el mismo."*
 
@@ -517,6 +552,8 @@ solo para personas, y prueba el hook contra ellos en tu versión.
 
 Material: [`examples/hooks/`](./examples/hooks/).
 
+**Demo (slides 22–23):** [H1, el hook dice que no](./DEMO_RUNBOOK_ES.md#h1--el-hook-dice-que-no). Pide al agente `git push`, `gh pr create` y `gh pr merge`: se deniegan todos, mientras que `git status` se ejecuta. Demuestra un veto determinista que las instrucciones solas no dan. Plan B offline: `bash .github/hooks/test-block-external-git.sh`.
+
 **Frase de cierre:** *"Las instrucciones piden. Un hook garantiza, siempre que responda antes del timeout."*
 
 ---
@@ -538,6 +575,8 @@ Material: [`examples/hooks/`](./examples/hooks/).
 
 El Copilot SDK (npm, pip, Go, .NET, Java) sigue el flujo `CopilotClient` → `createSession` →
 `sendAndWait`, y tiene hooks programáticos. Material: [`examples/automation/`](./examples/automation/).
+
+**Demo (slide 24), en la [tabla de comando por slide](./DEMO_RUNBOOK_ES.md#comando-por-slide):** enseña el workflow de [`examples/automation/`](./examples/automation/) sin ejecutarlo, y no ejecutes en directo el script de tareas del cloud agent. Demuestra cómo en CI la allowlist se escribe en la línea de comandos (`--trust-folder`, allow/deny explícitos).
 
 **Frase de cierre:** *"En CI no hay nadie para responder al aviso de confianza, así que escribe la allowlist en la línea de comandos."*
 
