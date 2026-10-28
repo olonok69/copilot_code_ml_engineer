@@ -3,7 +3,7 @@
 
     uv run --with python-pptx --with pillow python presentation/build_pptx_copilot.py
 
-~40 slides, 16:9, in two sessions (1 GitHub Copilot · 2 methodology and ticket knowledge graph)
+~42 slides, 16:9, in two sessions (1 GitHub Copilot · 2 methodology and ticket knowledge graph)
 plus an appendix. Section tags (§00–§16) match TECHNICAL_GUIDE.md and SPEAKER_GUIDE.md.
 Adapted from the Cursor volume's `build_pptx_cursor_en.py`: same visual system and components.
 
@@ -13,6 +13,7 @@ Images (optional — a missing file becomes a labelled text panel, never a crash
   examples/subagents/agents.png        subagent vs /fleet vs cloud agent
 
 Copilot facts come only from docs/research/COPILOT_FINDINGS_2026-10-17.md (verified 2026-10-17).
+Field-test slides (38-40) come only from docs/ai-agents-code-methodology/field-reports/ (2026-10-28).
 
 Layers: 1. visual system  2. components  3. content (one `s_*()` function per slide).
 """
@@ -411,7 +412,7 @@ def s_agenda(prs):
         "§13  Tool prevalence: CodeGraph · Serena · GSD",
         "§14–15  Claude Code transfer · machine sync",
         "§16  Ticket graph: graphify · kg / kg-refresh",
-        "WSL demo  Skills/tools verified; gated checks stay explicit",
+        "Field test  A real workday + one ticket replay, measured",
         "Appendix  Claude Code → Cursor → Copilot · Sources",
     ])
 
@@ -1041,12 +1042,15 @@ def s_cg_serena(prs):
           ["Playwright", "BUILT IN — don't add", "add if needed", "default, localhost"],
           ["Context7", "http, tools [\"*\"]", "same", "firewall allow mcp.context7.com"]],
          first_w=3.35, size=10.5)
-    line(slide, 0.7, 5.25, 11.95, 0.9, [
+    line(slide, 0.7, 5.2, 11.95, 1.05, [
         R("CodeGraph answers “what breaks?”; Serena answers “exactly who calls THIS process()?”  ",
-          12, GREEN, True),
+          11.5, GREEN, True),
+        R("Field test 2026-10-28: Serena worked in VS Code Copilot once registered in "
+          "~/.copilot/mcp-config.json (find, references, safe-delete, rename); first call ~1 min, "
+          "fallback CodeGraph → Pylance → grep.  ", 11, TEXT),
         R("Whether --path . resolves against the session cwd is UNVERIFIED — launch from the repo "
-          "root or pin an absolute path in ~/.copilot/mcp-config.json.", 11.5, MUTED),
-    ], ls=1.08)
+          "root or pin an absolute path.", 11, MUTED),
+    ], ls=1.05)
     quote(slide, "Treat codegraph_explore output as already read; never rename without Serena's check.")
 
 
@@ -1134,10 +1138,12 @@ def s_ops(prs):
         "Dry-run by default; guard BOTH directions",
         "ONE publisher; “derived” is per file",
     ], GREEN, 1.65, size=11)
-    card(slide, 0.7, 4.7, 11.95, 1.5, "Agent-specific: the machine has a role", [
+    card(slide, 0.7, 4.65, 11.95, 1.6, "Agent-specific: the machine has a role", [
         "IDENTITY.md (gitignored) declares publisher | contributor; AGENTS.md points to it",
         "day skill = start/end routine; optional sessionStart prompt hook runs /day start (CLI)",
-    ], ACCENT, 0.55, size=11)
+        "Field test: day start caught a stale sync target before any pull; the day end preview "
+        "caught 2 files a contributor must not publish",
+    ], ACCENT, 0.85, size=11)
     quote(slide, "A rule in a runbook decays silently; a routine you call leaves a trace.")
 
 
@@ -1225,30 +1231,78 @@ def s_kg_usage(prs):
     quote(slide, "One semantic step at build time, zero LLM at query time.")
 
 
-def s_replication(prs):
-    slide = chrome(prs, "SESSION 2 · WSL PARITY CHECK",
-                   "What the ILS_2 Copilot check proves—and what it doesn't", nxt())
-    card(slide, 0.7, 1.95, 5.85, 3.5, "Verified safely · 2026-10-25", [
-        "Course-repo Copilot session: 8 personal skills visible",
-        "Course-repo MCP view: CodeGraph + Context7 connected (user-confirmed)",
-        "CodeGraph CLI + bounded MCP query on the target repo",
-        "Evidence: 22 offline tests · Atlassian: 62 mocked tests",
-        "Synthetic methodology-plan and disposable sanitise-diff exercises",
-        "Personal instructions and local MCP; no shared .github changes",
-    ], GREEN, 2.65, size=10.5)
-    card(slide, 6.8, 1.95, 5.85, 3.5, "Gated · not claimed as parity", [
-        "Real preview: designated fixture unavailable; run not performed",
-        "Evidence fetch and authenticated Atlassian reads: not run",
-        "day / kg-refresh: safety gates checked; shared operations not run",
-        "Serena unavailable; Pylance provided local Python navigation",
-        "Skill discovery is not the same as remote end-to-end behavior",
-    ], ACCENT, 2.65, size=10.5)
-    line(slide, 0.7, 5.65, 11.95, 0.55, [
-        R("Scope note: ", 11.5, BLUE, True),
-        R("user confirmed the active course-repo customization view; target-repo results are reported "
-          "separately. Source report stays local under ILS_2/data.", 11, MUTED),
+def s_field_workday(prs):
+    slide = chrome(prs, "SESSION 2 · FIELD TEST · 2026-10-28",
+                   "A real workday on Copilot: what actually ran", nxt())
+    card(slide, 0.7, 1.95, 5.85, 3.6, "Passed live, within scope", [
+        "day start: stale sync target caught before any pull; snapshot pull, no --delete",
+        "evidence: 2 dev runs fetched read-only; source hashes matched",
+        "viewer: captured outputs rendered locally; no re-extraction, no model calls",
+        "atlassian: 62 mocked tests + 3 approved read-only live GETs",
+        "kg find (22 matches) · CodeGraph one-symbol bounded lookup",
+        "Serena: live once registered in ~/.copilot/mcp-config.json",
+    ], GREEN, 2.8, size=11)
+    card(slide, 6.8, 1.95, 5.85, 3.6, "Minimal, gated, or not exercised", [
+        "day end: dry-run preview + read-only ledger only; nothing uploaded",
+        "kg-refresh: out of scope by decision",
+        "Context7: connected per the user; no tool exposed in the session",
+        "methodology-plan: gates replayed; full template agreement not done",
+        "GitHub remote ops: no non-interactive credentials",
+        "Skill discovery is not proof every operation is safe to run",
+    ], ACCENT, 2.8, size=11)
+    line(slide, 0.7, 5.7, 11.95, 0.55, [
+        R("Source: ", 11.5, BLUE, True),
+        R("docs/ai-agents-code-methodology/field-reports/. Evidence folders hold customer documents: "
+          "show synthetic or redacted screens only.", 11, MUTED),
     ])
-    quote(slide, "Show what passed, name what was gated, and never call an unsafe shortcut a parity test.")
+    quote(slide, "A bounded validation: the checks that passed and their limits, shown together.")
+
+
+def s_field_replay(prs):
+    slide = chrome(prs, "SESSION 2 · FIELD TEST · 2026-10-28",
+                   "Replaying one past ticket through the gates", nxt())
+    rows = [
+        ("Setup", "Backup clone, branch cut at the pre-fix commit; nothing committed or pushed"),
+        ("Root cause", "Same as the earlier agents: a 13-word title fails the length check, and a "
+                       "typed “59.” stops the underline collector"),
+        ("RED", "14 new tests: 5 fail as intended, 9 guards stay green"),
+        ("GREEN", "~18 lines + 2 regexes in one function; 31 targeted tests pass; corpus diff = "
+                  "the ticket's recorded counts"),
+        ("Deployed image", "Real LLM re-extract in the deployed image: 94 provisions, all 6 checks pass"),
+        ("Sanitise", "Real diff: 0 names, secrets or attribution; 1 internal ticket id in a docstring"),
+        ("Full suite", "1552 → 1566 passed (+14 new); same 3 failures; 5 files not collected "
+                       "(host venv)"),
+    ]
+    for i, (label_text, detail) in enumerate(rows):
+        step_row(slide, 1.95 + 0.55 * i, label_text, detail)
+    line(slide, 0.7, 5.85, 11.95, 0.45, [
+        R("Not a blind test: ", 11.5, ACCENT, True),
+        R("the fix plan had been read earlier. Still owed: a re-upload on the deployed function "
+          "after a merge. Fix archived as a diff, then reverted.", 11, MUTED),
+    ])
+    quote(slide, "Same root cause, same counts, same gates — and everything reverted.")
+
+
+def s_field_lessons(prs):
+    slide = chrome(prs, "SESSION 2 · FIELD TEST · 2026-10-28",
+                   "What the field test taught, and what is still open", nxt())
+    card(slide, 0.7, 1.95, 5.85, 4.2, "Practical findings", [
+        "Serena: the first call takes ~1 min (LSP warm-up); retry it",
+        "Serena edits land on disk just after the tool returns: re-check git diff",
+        "Cold imports from /mnt/d take ~5 min: set long timeouts",
+        "The extractor rewrites the DOCX it opens: always work on copies",
+        "Local runs need dummy SQS_* values (no network used)",
+        "day end preview listed 2 knowledge-graph/_corpus files: exclude them; never --delete",
+    ], BLUE, 3.3, size=11.5)
+    card(slide, 6.8, 1.95, 5.85, 4.2, "Still open", [
+        "A blind run on an unseen ticket",
+        "The deployed-function re-upload check (needs a merge)",
+        "Full methodology-plan template agreement",
+        "kg-refresh and a real day end publish",
+        "A Context7 lookup inside Copilot",
+        "5 test files not collected in the host venv (broker 0.1.3 vs v0.1.5)",
+    ], ACCENT, 3.3, size=11.5)
+    quote(slide, "Verified means exactly what we ran; gated means not yet proven.")
 
 
 def s_equiv(prs):
@@ -1290,7 +1344,8 @@ def s_close(prs):
     line(slide, 0.7, 6.3, 12.0, 0.6, [
         R("Sources (verified 2026-10-17 — Copilot moves fast, re-check before reuse):  "
           "docs.github.com/en/copilot  ·  code.visualstudio.com/docs  ·  github.blog/changelog  ·  "
-          "github.com/colbymchenry/codegraph  ·  github.com/oraios/serena", 10.5, DIM)])
+          "github.com/colbymchenry/codegraph  ·  github.com/oraios/serena  ·  "
+          "field test 2026-10-28: docs/ai-agents-code-methodology/field-reports/", 10.5, DIM)])
 
 
 SLIDES = [
@@ -1308,7 +1363,8 @@ SLIDES = [
     s_hooks, s_hook_recipe,
     s_automation,
     s_part2, s_flow, s_gate, s_prevalence, s_cg_serena, s_gsd, s_transfer, s_holes, s_ops,
-    s_part3, s_kg_pipeline, s_kg_graph, s_kg_usage, s_replication,
+    s_part3, s_kg_pipeline, s_kg_graph, s_kg_usage,
+    s_field_workday, s_field_replay, s_field_lessons,
     s_equiv, s_close,
 ]
 
