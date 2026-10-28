@@ -41,6 +41,7 @@
 15. [Machine sync (tarball + S3)](#15-machine-sync)
 
 16. [Ticket knowledge graph](#16-ticket-knowledge-graph)
+17. [Field test 2026-10-28: the methodology on Copilot, measured](#17-field-test-2026-10-28)
 
 **Appendices**
 
@@ -719,6 +720,23 @@ LSP-backed semantic navigation. `find_referencing_symbols` is the precise check 
 (disambiguates same-named methods by class). Complements CodeGraph. The read-only
 [`refactor-scout`](./.github/agents/refactor-scout.agent.md) agent packages CodeGraph → Serena → grep.
 
+**Copilot does not inherit Serena from other agents.** In the 2026-10-28 field test it was missing only
+because it had never been registered for Copilot. Adding it to the personal config fixed it:
+```jsonc
+// ~/.copilot/mcp-config.json (back it up first)
+{ "mcpServers": {
+    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"], "tools": ["*"] }
+} }
+```
+Measured after a restart, in VS Code Copilot: `initial_instructions`, `find_symbol` and
+`find_referencing_symbols` worked; `safe_delete_symbol` refused to delete a referenced method and listed its
+5 reference sites; `rename_symbol` reported 7 changes across the definition, one caller and tests in 3 files
+(reverted with git). `replace_symbol_body` and the insert tools were not exercised.
+- ⚠️ The first call per session can time out while the Python language server warms up (~1 min). Retry.
+- ⚠️ Edits land on disk slightly after the tool returns: a `git diff` taken at once can be empty.
+- Serena caches under the ignored `.serena/` and may report references inside ignored `data/` copies.
+- Fallback order when Serena is unavailable: CodeGraph → Pylance usages → grep.
+
 ### GSD ([`examples/gsd/`](./examples/gsd/)) — Claude Code only
 Phase-based cycle with versioned `.planning/` state and specialised subagents. **No Copilot port.**
 Nearest Copilot pieces:
@@ -847,6 +865,15 @@ the answer is ambiguous it stops and asks.
 
 > ⚠️ **Measure an optimisation before you quote it.** Predicted "minutes to seconds"; measured 212 s → 123 s.
 
+> **Field test 2026-10-28 (Copilot, real workday).** `day start` found that `LOCAL_DATA` in `config.env`
+> pointed at a different checkout **before** any pull; after a local-only fix, `IDENTITY.md` was regenerated,
+> the `changes` dry run found nothing to upload, and the pull ran with a pre-pull snapshot, moved
+> upstream-deleted files aside and used no `--delete`. `day end` ran only as a dry-run publish preview plus
+> the read-only activity ledger. That preview listed two `knowledge-graph/_corpus` files that would have
+> uploaded despite the contributor rule: a real publish must exclude them, write the STATUS row first, and
+> never use `--delete`. A local `canary_leadin_diff.json` overwritten by a re-run was restored from the bucket
+> with a read-only `s3 cp`. See [§17](#17-field-test-2026-10-28).
+
 ---
 
 # SESSION 2 CONTINUED — The ticket knowledge graph (graphify)
@@ -898,6 +925,11 @@ a skill, not a script.
 before grepping `data/changes/`. `EXTRACTED` = reliable; `INFERRED` = a lead to verify. The real gain is
 recall in dense zones.
 
+> ⚠️ **Field note (2026-10-28).** `/kg count edges` in Copilot returned graph-size metadata (3,921 nodes /
+> 8,508 edges), but `kg_query.sh` itself supports only `explain`, `path` and `find`. Calling the script with
+> `count edges` is not a valid count test; do not present it as one. `kg_query.sh find <substr>` worked
+> (22 matches). Do not refresh the graph from a contributor machine.
+
 > ⚠️ **"Derived" is a property of the file, not of the folder.** Inside the generated tree lives a
 > hand-authored file — the curated community names — that nothing regenerates; on a real rebuild **under 1%**
 > survived. Classify per file: source / derived / authored-inside-derived (treat as source). Stamp the
@@ -906,6 +938,65 @@ recall in dense zones.
 > **Cost — honest.** "No LLM at query time" is not "free": the reasoning is paid once at build time; each
 > `kg` query is a deterministic lookup whose only cost is the agent reading a short output. Paid once,
 > collected on every use — from any of the four agents.
+
+---
+
+## 17. Field test 2026-10-28
+
+The methodology and all its skills were run with **GitHub Copilot agent in VS Code** on a real
+non-production workday, with some deliberate restrictions. Full reports:
+[`COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md`](./docs/ai-agents-code-methodology/field-reports/COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md)
+(skill by skill) and
+[`COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md`](./docs/ai-agents-code-methodology/field-reports/COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md)
+(one ticket replayed through the gates). These are **measured** results that replace the earlier
+"parity is expected" claim. They are not a statement that anything was published, merged or pushed.
+
+### Skill by skill
+
+| Skill / tool | Result | What actually ran | Limits |
+|---|---|---|---|
+| `day` start | PASS, scoped | Identity + non-prod AWS checked; stale sync target fixed (local only, user-authorised); dry run clean; protected pull with snapshot, no `--delete` | `git fetch` blocked (no non-interactive GitHub credentials) |
+| `day` end | MINIMAL | Dry-run publish preview + read-only activity ledger | No upload; preview flagged 2 `_corpus` files to exclude |
+| `evidence` | PASS, live read-only | 2 dev runs: source, highlighted DOCX, raw Lambda result, scrubbed log; source hashes matched | Not the consumer `get-sl-upload-status` contract (needs an app session) |
+| `preview` / viewer | PASS, captured outputs | Local frontend + mock APIs rendered the captured results; containers removed afterwards | Deliberately not the normal preview command, which re-extracts and can spend model calls |
+| `atlassian` | PASS | 62-test mocked suite; 3 approved read-only GETs (2 Jira, 1 Confluence metadata) | No page bodies, comments, exports or writes |
+| `kg` | PASS, bounded | `find` with 22 matches; `/kg count edges` returned metadata only | See the §16 note on `count` |
+| `kg-refresh` | OUT OF SCOPE | — | Excluded by the user |
+| `methodology-plan` | PARTIAL | Synthetic six-part plan; gates 1–5 replayed on the real ticket | Full template agreement not done |
+| `sanitise-diff` | PASS | Disposable fixture, then the real fix diff (134 added lines) in a disposable repo | 1 internal ticket id in a test docstring (repo convention) |
+| CodeGraph | PASS, bounded | One-symbol lookup: one file with callers and dependencies | Navigation, not test coverage |
+| Serena | PASS, live | See [§13](#13-the-methods-tools) | First call slow; edits land late |
+| Context7 | NOT EXERCISED | Connected according to the user | No tool exposed in the session |
+
+### One ticket, replayed
+
+On a backup clone, branch `replay/…-pre-fix` cut at the commit before the original fix:
+
+| Gate | Result |
+|---|---|
+| Root cause | Same as the earlier agents: `is_potential_title` rejects a 13-word title (`TITLE_LEN_MAX` = 13), and `_underlined_lead_in_titles` stops at a non-underlined typed number run (`59.`), so `_is_acceptable_title` never rescues it. **Not blind**: the fix plan had been read earlier. |
+| RED | 14 new tests: 5 fail on the target behaviour (assertions, not import errors), 9 guards pass |
+| GREEN | One function, ~18 added lines + 2 regexes, no threshold/prompt/config change; 14/14 new + 17/17 existing = 31 pass |
+| Blast radius | No-LLM lead-in diff over the local corpus, canary first: 8 files gain lead-ins, exactly 1 outcome-changing entry; counts equal the ticket's recorded sweep |
+| Deployed image | Real LLM re-extract in the deployed image (branch mounted read-only, on a copy): 94 provisions, all 6 checks pass |
+| Regression | Related subset: 235 passed, 1 skipped, 0 failed. Full suite: 1552 → 1566 passed (+14), same 3 failures, same 5 collection errors (broker 0.1.3 vs v0.1.5 in the host venv; those files did not run) |
+| Sanitise | 0 names (11-entry list), secrets, account ids, e-mails or attribution; 1 internal ticket id |
+| Close | Fix and tests reverted and archived (`fix.diff`, test as `.txt`); replay branch deleted; nothing committed or pushed |
+
+Still owed in the real flow: the re-upload check on the deployed function after a merge, and a blind run on
+an unseen ticket.
+
+### Practical findings
+
+- Cold imports of the extractor from `/mnt/d` take ~5 min (I/O bound; ~1.5–2 min once cached). A short tool
+  timeout there is a tooling limit, not a defect.
+- Local runs need dummy `SQS_LAMBDACLIENTSL` / `SQS_MATTERRPCSERVICE` values; no network is used.
+- The extractor rewrites the DOCX it opens: always run on a copy, and check the original's mtime afterwards.
+- When the host venv lacks a dependency version, run inside the deployed-image build with the branch mounted
+  read-only, as the ticket's own second run did.
+- Re-running a corpus diff overwrites the recorded output file: keep a byte copy first.
+- Evidence folders contain customer documents. They stay local and ignored; never copy them into slides
+  or commits.
 
 ---
 

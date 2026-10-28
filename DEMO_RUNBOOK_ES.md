@@ -1,4 +1,4 @@
-# DEMO_RUNBOOK — Presentación de GitHub Copilot (40 slides)
+# DEMO_RUNBOOK — Presentación de GitHub Copilot (42 slides)
 
 > English version: [`DEMO_RUNBOOK.md`](./DEMO_RUNBOOK.md).
 
@@ -12,6 +12,11 @@ referencia: [`GUIA_TECNICA.md`](./GUIA_TECNICA.md).
 > partes offline: los tests del hook, el `npm test` de los objetivos de demo y la generación del deck.
 > **Haz un ensayo completo en tu máquina y con tu versión de Copilot antes de presentar.** Copilot
 > cambia entre versiones.
+>
+> La metodología en sí se ejecutó con el agente de Copilot en VS Code en una jornada real el
+> **2026-10-28**. Qué pasó, qué quedó pendiente y qué sigue abierto está en
+> [`docs/ai-agents-code-methodology/field-reports/`](./docs/ai-agents-code-methodology/field-reports/)
+> y en los slides 38–40. Presenta esos resultados; no los vuelvas a ejecutar en directo.
 
 ---
 
@@ -75,10 +80,16 @@ falta una skill del repo, puede que su `name` no coincida con el nombre de su ca
 workspace WSL `/mnt/d/repos3/ILS_2`, aprobado por el usuario, para la Sesión 2. Confirma la lista de
 skills personales en Copilot Customizations e inspecciona la lista de MCP en la ventana activa; no
 des por hecho que lo que se descubre en el repo del curso demuestra lo que se descubre en el repo de
-destino. La comprobación del 2026-10-25 verificó un uso acotado de CodeGraph y pruebas de skills
-offline o simuladas, pero dejó pendientes el preview real, la descarga remota de evidencia, las
-lecturas autenticadas de Atlassian y las operaciones compartidas de `day` / `kg-refresh`. Mantén
-cerradas esas puertas durante la charla.
+destino. La prueba de campo del 2026-10-28 ejecutó de verdad `day start`, descargas de evidencia en
+solo lectura, el visor local sobre resultados capturados, GET de Atlassian de solo lectura aprobados,
+`kg`, CodeGraph y Serena, además de repetir completo un ticket pasado. `day end` solo se ejecutó en
+modo simulación y `kg-refresh` quedó fuera de alcance. Durante la charla, enseña los resultados y
+mantén cerrado todo camino de escritura: nada de publicar, subir, re-extraer ni hacer lecturas
+autenticadas delante del público.
+
+**Serena en Copilot:** regístralo en `~/.copilot/mcp-config.json` antes de la charla (no se hereda de
+Cursor ni de Claude Code), reinicia Copilot y haz una llamada de calentamiento (`find_symbol` sobre
+cualquier símbolo) para que el servidor de lenguaje esté listo antes del slide 29.
 
 **Plan B si no hay red o no puedes iniciar sesión:** haz todas las demos a partir de los textos de los
 slides, más el test del hook (offline) y `copilot --help` / `copilot help permissions`.
@@ -112,8 +123,10 @@ slides, más el test del hook (offline) y `copilot --help` / `copilot help permi
 | 24 | Automatización | Enseña el workflow de [`examples/automation/`](./examples/automation/) (`--trust-folder`, allow/deny explícitos). **No** ejecutes en directo el script de tareas del cloud agent. |
 | 25–33 | Sesión 2 · metodología | Slides + abre [`examples/methodology/WORKFLOW.md`](./examples/methodology/WORKFLOW.md) y [`docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md`](./docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md). Demos sobre código real: **R1** (abajo). |
 | 34–37 | Sesión 2 · caso del grafo | `bash docs/knowledge-graph/kg_query.sh find letter` y después `kg_query.sh TKT-104` contra el grafo real sanitizado (ver [`docs/knowledge-graph/`](./docs/knowledge-graph/)). |
-| 38 | Sesión 2 · evidencia de paridad | Presenta el límite entre lo verificado y lo pendiente; no ejecutes preview real, descargas remotas, lecturas autenticadas ni operaciones compartidas. |
-| 39–40 | Apéndice, cierre | — |
+| 38 | Prueba de campo · una jornada real | Solo el slide. Si quieres, abre las tablas del [informe de validación en vivo](./docs/ai-agents-code-methodology/field-reports/COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md). No abras nunca las carpetas de evidencia en pantalla. |
+| 39 | Prueba de campo · repetición del ticket | Solo el slide. Si quieres, abre el [informe de la repetición](./docs/ai-agents-code-methodology/field-reports/COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md). Di en voz alta "no fue una prueba a ciegas". |
+| 40 | Prueba de campo · hallazgos y pendientes | Solo el slide. |
+| 41–42 | Apéndice, cierre | — |
 
 ---
 
@@ -184,6 +197,13 @@ Después ejecuta:
 Arranca `copilot` **desde la raíz de ese repo**. Si `--path .` se resuelve respecto al directorio de
 la sesión está NO VERIFICADO.
 
+Lo que vio la prueba de campo del 2026-10-28 con Serena en Copilot de VS Code: la primera llamada a
+`find_referencing_symbols` agotó el tiempo durante el arranque del servidor de lenguaje (alrededor de
+un minuto) y el reintento funcionó; `safe_delete_symbol` se negó a borrar un método referenciado y
+listó sus 5 referencias; `rename_symbol` informó de 7 cambios, pero `git diff` no mostró nada hasta un
+momento después. Si haces la demo de un renombrado, espera unos segundos antes de enseñar el diff y
+revértelo con git al terminar.
+
 ---
 
 ## Tiempos (franja de 90 minutos)
@@ -195,8 +215,9 @@ la sesión está NO VERIFICADO.
 | §04–§06 sesiones, contexto, caching | 13–16 | 10 |
 | §07–§09 MCP, skills, agentes | 17–21 | 15 |
 | §10–§11 hooks, automatización | 22–24 | 10 |
-| Sesión 2 · metodología + grafo | 25–38 | 25 |
-| Apéndice + cierre | 39–40 | 3 |
+| Sesión 2 · metodología + grafo | 25–37 | 20 |
+| Sesión 2 · prueba de campo | 38–40 | 5 |
+| Apéndice + cierre | 41–42 | 3 |
 
 Para 60 minutos, quita las demos en vivo de los slides 13, 16, 21 y 24 y enseña solo el slide.
 
@@ -217,4 +238,8 @@ Para 60 minutos, quita las demos en vivo de los slides 13, 16, 21 y 24 y enseña
 | Un servidor de `.vscode/mcp.json` no aparece en el harness Copilot | Usa `${input:...}`, y esos no se reenvían | Muévelo a `.mcp.json` con variables de entorno |
 | El prompt file `/nombre` no existe | Estás en el harness Copilot o en la CLI | Cambia a Local, o conviértelo en una skill |
 | Se ignora un `AGENTS.md` anidado | La CLI solo lee la raíz + el directorio actual; VS Code Local necesita `chat.useNestedAgentsMdFiles` | Usa `.instructions.md` con `applyTo` |
+| Faltan las herramientas de Serena en Copilot | Nunca se registró para Copilot; no hereda la configuración MCP de Cursor ni de Claude Code | Añade una entrada `serena` a `~/.copilot/mcp-config.json` (guarda una copia) y reinicia Copilot |
+| La primera llamada a Serena agota el tiempo | El servidor de lenguaje de Python aún está arrancando (alrededor de un minuto) | Reintenta una vez; haz una llamada de calentamiento antes de la charla |
+| `git diff` vacío justo después de un renombrado con Serena | Las ediciones llegan al disco un poco después de que la herramienta responde | Espera unos segundos y vuelve a mirar |
+| La vista previa de `day end` lista ficheros de `knowledge-graph/_corpus` | Las máquinas contribuidoras no deben publicar el corpus | Exclúyelos; no uses nunca `--delete`; escribe antes la fila de STATUS |
 | Sorpresa en el coste | `/fleet`, autopilot, el contexto de 1M y las tareas en la nube gastan AI Credits | `--max-ai-credits`, `/usage`, modelo `auto` |

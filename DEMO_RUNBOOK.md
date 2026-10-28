@@ -1,4 +1,4 @@
-# DEMO_RUNBOOK — GitHub Copilot presentation (40 slides)
+# DEMO_RUNBOOK — GitHub Copilot presentation (42 slides)
 
 > Versión en español: [`DEMO_RUNBOOK_ES.md`](./DEMO_RUNBOOK_ES.md).
 
@@ -11,6 +11,11 @@ reference: [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md).
 > (the docs as of 2026-10-17). Only the offline parts were run while this repo was built: the hook
 > tests, the demo targets' `npm test`, and the deck build. **Do a full dry run on your own machine
 > and Copilot build before you present.** Copilot changes between releases.
+>
+> The methodology itself was run with Copilot agent in VS Code on a real workday on **2026-10-28**.
+> What passed, what stayed gated, and what is still open are in
+> [`docs/ai-agents-code-methodology/field-reports/`](./docs/ai-agents-code-methodology/field-reports/)
+> and on slides 38–40. Present those results; do not re-run them live.
 
 ---
 
@@ -73,9 +78,15 @@ personal methodology skill pack as a separate live configuration. A missing repo
 **WSL two-session setup:** use this course repo for Session 1, then open the user-approved
 `/mnt/d/repos3/ILS_2` WSL workspace for Session 2. Confirm the personal skill list in Copilot
 Customizations and inspect the MCP list in the active window; do not assume course-repo discovery
-proves discovery in the target repo. The 2026-10-25 check verified bounded CodeGraph use and
-offline/mocked skill checks, but left real preview, remote evidence fetch, authenticated Atlassian
-reads, and shared `day` / `kg-refresh` operations gated. Keep those gates closed during the talk.
+proves discovery in the target repo. The 2026-10-28 field test ran `day start`, read-only evidence
+fetches, the local viewer on captured outputs, approved read-only Atlassian GETs, `kg`, CodeGraph and
+Serena for real, plus a full replay of one past ticket. It ran `day end` only as a dry run and left
+`kg-refresh` out of scope. During the talk, show the results and keep every write path closed: no
+publish, no upload, no new extraction, no authenticated reads in front of an audience.
+
+**Serena in Copilot:** register it in `~/.copilot/mcp-config.json` before the talk (it is not
+inherited from Cursor or Claude Code), restart Copilot, and make one warm-up call
+(`find_symbol` on any symbol) so the language server is ready before slide 29.
 
 **Fallback if there is no network or login:** run every demo from the slide captions plus the
 hook test (offline) and `copilot --help` / `copilot help permissions`.
@@ -109,8 +120,10 @@ hook test (offline) and `copilot --help` / `copilot help permissions`.
 | 24 | Automation | Show [`examples/automation/`](./examples/automation/) workflow (`--trust-folder`, explicit allow/deny) — do **not** run the cloud-agent task script live. |
 | 25–33 | Session 2 · methodology | Slides + open [`examples/methodology/WORKFLOW.md`](./examples/methodology/WORKFLOW.md), [`docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md`](./docs/ai-agents-code-methodology/COPILOT_ADAPTATION.md). Real-code demos: **R1** (below). |
 | 34–37 | Session 2 · graph case study | `bash docs/knowledge-graph/kg_query.sh find letter`, then `kg_query.sh TKT-104` against the sanitised real graph (see [`docs/knowledge-graph/`](./docs/knowledge-graph/)). |
-| 38 | Session 2 · parity evidence | Present the verified/gated boundary; do not run real preview, remote fetches, authenticated reads, or shared operations. |
-| 39–40 | Appendix, close | — |
+| 38 | Field test · a real workday | Slide only. Optionally open the [live validation report](./docs/ai-agents-code-methodology/field-reports/COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md) tables. Never open the evidence folders on screen. |
+| 39 | Field test · ticket replay | Slide only. Optionally open the [replay report](./docs/ai-agents-code-methodology/field-reports/COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md). Say "not a blind test" out loud. |
+| 40 | Field test · findings and open items | Slide only. |
+| 41–42 | Appendix, close | — |
 
 ---
 
@@ -179,6 +192,12 @@ Then run:
 Launch `copilot` **from that repo's root**. Whether `--path .` resolves against the session cwd is
 UNVERIFIED.
 
+What the 2026-10-28 field test saw with Serena in VS Code Copilot: the first
+`find_referencing_symbols` call timed out during the language-server warm-up (about a minute) and the
+retry worked; `safe_delete_symbol` refused to delete a referenced method and listed its 5 reference
+sites; `rename_symbol` reported 7 changes, but `git diff` showed nothing until a moment later. If you
+demo a rename, wait a few seconds before you show the diff, and revert it with git afterwards.
+
 ---
 
 ## Timings (90-minute slot)
@@ -190,8 +209,9 @@ UNVERIFIED.
 | §04–§06 sessions, context, caching | 13–16 | 10 |
 | §07–§09 MCP, skills, agents | 17–21 | 15 |
 | §10–§11 hooks, automation | 22–24 | 10 |
-| Session 2 · methodology + graph | 25–38 | 25 |
-| Appendix + close | 39–40 | 3 |
+| Session 2 · methodology + graph | 25–37 | 20 |
+| Session 2 · field test | 38–40 | 5 |
+| Appendix + close | 41–42 | 3 |
 
 For 60 minutes, drop the live demos for 13, 16, 21 and 24 and show the slide only.
 
@@ -212,4 +232,8 @@ For 60 minutes, drop the live demos for 13, 16, 21 and 24 and show the slide onl
 | `.vscode/mcp.json` server absent in the Copilot harness | It uses `${input:...}`, and those are not forwarded | Move it to `.mcp.json` with env vars |
 | Prompt file `/name` doesn't exist | You are in the Copilot harness or the CLI | Switch to Local, or convert it to a skill |
 | Nested `AGENTS.md` ignored | The CLI reads root + cwd only; VS Code Local needs `chat.useNestedAgentsMdFiles` | Use `.instructions.md` with `applyTo` |
+| Serena tools missing in Copilot | Never registered for Copilot; it does not inherit Cursor's or Claude Code's MCP config | Add a `serena` entry to `~/.copilot/mcp-config.json` (keep a backup) and restart Copilot |
+| First Serena call times out | The Python language server is still warming up (about a minute) | Retry once; make a warm-up call before the talk |
+| `git diff` is empty right after a Serena rename | The edits land on disk slightly after the tool returns | Wait a few seconds and check again |
+| `day end` preview lists `knowledge-graph/_corpus` files | Contributor machines must not publish the corpus | Exclude them; never use `--delete`; write the STATUS row first |
 | Cost surprise | `/fleet`, autopilot, 1M context and cloud tasks all spend AI Credits | `--max-ai-credits`, `/usage`, `auto` model |

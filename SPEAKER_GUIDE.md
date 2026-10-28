@@ -19,7 +19,8 @@
 >   surface reads.
 > - **Session 2 — The methodology and ticket graph (§12–§16):** how you actually work with an agent in production. It
 >   does not depend on the tool. It started in Claude Code, moved to Cursor, and now runs on Copilot.
->   The graphify case study is the final topic within this same session.
+>   The graphify case study follows, and the session closes with the **2026-10-28 field test**: what
+>   ran on a real workday with Copilot in VS Code, and what is still open.
 >
 > **Verification note:** every Copilot claim in this guide comes from
 > [`docs/research/COPILOT_FINDINGS_2026-10-17.md`](./docs/research/COPILOT_FINDINGS_2026-10-17.md),
@@ -70,9 +71,11 @@
 | 35 | The problem, and the pipeline | §16a |
 | 36 | The current graph: 3,921 nodes, 178 communities | §16b |
 | 37 | Using it from Copilot | §16c |
-| 38 | ILS_2 WSL parity check: verified vs gated | — |
-| 39 | Claude Code → Cursor → Copilot | Appendix |
-| 40 | Close + sources | — |
+| 38 | Field test: a real workday on Copilot | Field test |
+| 39 | Replaying one past ticket through the gates | Field test |
+| 40 | What the field test taught, and what is still open | Field test |
+| 41 | Claude Code → Cursor → Copilot | Appendix |
+| 42 | Close + sources | — |
 
 ---
 
@@ -455,7 +458,8 @@ The reusable methodology pack is at
 For the live WSL Copilot session, the user confirmed these eight personal skills are visible in
 Copilot Customizations: `day`, `evidence`, `preview`, `atlassian`, `kg`, `kg-refresh`,
 `methodology-plan`, and `sanitise-diff`. Treat this as a discovery check, not proof that every
-remote or production behavior is safe to run; Session 2 states what was and was not tested.
+remote or production behavior is safe to run. The 2026-10-28 field test (slides 38–40) then ran most
+of them for real, within limits; `kg-refresh` stayed out of scope and `day end` ran only as a dry run.
 
 **Demo (slide 19):** [S1–S3, skills on the demo targets](./DEMO_RUNBOOK.md#s1s3--skills-on-the-demo-targets): `/audit ex_npm`, `/audit-python ex_app`, `/deploy-staging ex_staging`. Shows skills invoked as `/name`, and a skill that stops for your OK before it deploys.
 
@@ -635,6 +639,13 @@ MCP settings plus `copilot-setup-steps.yml` (cloud). Whether `--path .` resolves
 cwd is UNVERIFIED, so launch from the repo root or pin an absolute path. Material:
 [`examples/codegraph/`](./examples/codegraph/), [`examples/serena/`](./examples/serena/).
 
+Field note for slide 29: in the 2026-10-28 test, Serena was missing from Copilot only because it had
+never been registered there (Cursor and Claude Code already had it). Once a `serena` entry was added
+to `~/.copilot/mcp-config.json` and Copilot restarted, `find_symbol`, `find_referencing_symbols`, a
+`safe_delete_symbol` that correctly refused, and a 7-change `rename_symbol` all worked (the rename was
+reverted). Warn the audience that the first call per session can time out while the language server
+warms up (about a minute), so retry it. The fallback order stays CodeGraph, then Pylance usages, then grep.
+
 **Story (slide 30):** **GSD works only in Claude Code.** Copilot has no first-party equivalent of its
 phase/roadmap state machine. The nearest pieces:
 
@@ -706,6 +717,12 @@ The agent-specific part: the machine has a role. `IDENTITY.md` says publisher or
 `AGENTS.md` points to it. On Copilot, the `day` skill can be enforced by a `sessionStart` prompt hook
 that runs `/day start` (CLI, new interactive sessions only). The Cursor volume could not do that.
 
+Field note (2026-10-28): on a real workday, `day start` caught a local sync target that pointed at the
+wrong checkout **before** any pull; after a local-only fix, the dry run found nothing to upload and the
+pull ran with a snapshot and no `--delete`. `day end` ran only as a dry-run preview, and that preview
+listed two `knowledge-graph/_corpus` files that a contributor must not publish. The guard is the point:
+the preview is where the mistake becomes visible.
+
 Runbooks: [`docs/synchro/`](./docs/synchro/) · scripts:
 [`examples/methodology/s3-sync/`](./examples/methodology/s3-sync/).
 
@@ -745,31 +762,81 @@ and they hook into stage 1 (Orient): run `kg` *before* grep. Under Copilot:
 
 ---
 
-## WSL parity check (slide 38)
+## Field test 2026-10-28 (slides 38–40)
 
-The WSL parity check reports only evidence the other agent actually gathered.
-The eight personal skills were user-confirmed in the active Copilot Customizations view; CodeGraph
-CLI and a bounded MCP query worked in the target repo; the evidence and Atlassian test suites ran
-against offline/mocked fixtures. The active course-repo Copilot MCP view was separately confirmed
-to show CodeGraph and Context7. Do not collapse these into one claim about every target-repo surface.
+Source: the two reports in
+[`docs/ai-agents-code-methodology/field-reports/`](./docs/ai-agents-code-methodology/field-reports/)
+([live validation](./docs/ai-agents-code-methodology/field-reports/COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md),
+[ticket replay](./docs/ai-agents-code-methodology/field-reports/COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md)).
+This replaces the earlier "parity is expected" framing with **measured** results from GitHub Copilot
+agent in VS Code, run on a real non-production workday with the methodology and all the skills.
+Nothing was published, merged or pushed.
 
-The check deliberately did **not** run real preview work (no approved fixture), evidence fetches,
-authenticated Atlassian reads, or shared `day` / `kg-refresh` operations. Serena was unavailable;
-Pylance supplied local Python navigation, not a Serena replacement. The slide makes this boundary
-visible instead of claiming full parity.
+**Story (slide 38): a real workday.** What passed live, each within its scope:
+
+- `day start`: caught a stale local sync target before any pull; the protected pull made a snapshot and
+  did not use `--delete`.
+- `evidence`: two development runs fetched read-only; the downloaded source hashes matched the originals.
+- Viewer: the captured outputs rendered in the local frontend. No new extraction and no model calls,
+  so it proves the presentation of captured results, not the live contract.
+- `atlassian`: the 62-test mocked suite, then three approved read-only Jira/Confluence GETs.
+- `kg find` (22 matches) and one bounded CodeGraph lookup.
+- Serena, once registered (see slide 29).
+
+What stayed minimal or gated: `day end` (dry-run preview plus read-only ledger, no upload);
+`kg-refresh` (out of scope by decision); Context7 (connected according to the user, but no tool was exposed
+in the session); the full `methodology-plan` template agreement; GitHub remote operations (no
+non-interactive credentials). Skill discovery is still not proof that every operation is safe to run.
+
+**Story (slide 39): one past ticket, replayed.** On a backup clone, a branch was cut from the commit
+before the original fix. From the problem text and evidence alone, Copilot reached the same root cause as
+the earlier agents: a 13-word title fails the length check, and a typed number run (`59.`) stops the
+collector of underlined lead-ins, so the long-title rescue never fires. Then it went through the gates:
+
+- **RED:** 14 new tests, 5 failing as intended and 9 guards green.
+- **GREEN:** about 18 added lines and 2 small regexes in one function; 31 targeted tests pass; the
+  no-LLM corpus diff matched the counts recorded on the ticket.
+- **Deployed image:** a real LLM re-extract inside the deployed image gave 94 provisions and passed all
+  six checks. This is checks 1–3 of the outbound gate on slide 27, done for real.
+- **Sanitise:** on the real diff, 0 name, secret or attribution hits; 1 internal ticket id in a test
+  docstring, which follows the repo's convention.
+- **Full suite:** 1552 passed on the baseline, 1566 with the fix (+14 new tests), the same 3 failures in
+  both. 5 test files did not run because the host venv had broker 0.1.3 instead of v0.1.5, an environment
+  issue, not the fix.
+
+Everything was reverted, the replay branch deleted, and the fix archived as a diff. Say the caveat out
+loud: **this was not a blind test**, because the fix plan had been read earlier in the session.
+
+**Story (slide 40): what it taught, and what is still open.** Practical findings:
+
+- Serena's first call takes about a minute (language-server warm-up); its edits land on disk slightly
+  after the tool returns, so check `git diff` again after a short wait.
+- Cold imports from `/mnt/d` take about 5 minutes; set long timeouts.
+- The extractor rewrites the DOCX it opens, so always work on copies.
+- Local runs need dummy `SQS_*` values (no network is used).
+- The `day end` preview listed two `knowledge-graph/_corpus` files: exclude them in any real publish,
+  and never use `--delete`.
+
+Still open: a blind run on an unseen ticket; the re-upload check on the deployed function (needs a merge);
+full `methodology-plan` template agreement; `kg-refresh` and a real `day end` publish; a Context7 lookup
+inside Copilot; the 5 test files that could not be collected in the host venv.
+
+Do not project the evidence folders or copy customer documents or identifiers into slides. Use synthetic
+or redacted screens.
 
 🗣️ *"Verified means exactly what we ran; gated means not yet proven."*
 
 ---
 
-## Appendix and close (slides 39–40)
+## Appendix and close (slides 41–42)
 
-**Slide 39:** the Claude Code → Cursor → Copilot equivalence table. It is the slide to photograph.
+**Slide 41:** the Claude Code → Cursor → Copilot equivalence table. It is the slide to photograph.
 The longer version is in [`TECHNICAL_GUIDE.md`](./TECHNICAL_GUIDE.md).
 
-**Slide 40:** eight takeaways, then the sources. Read the date out loud: **verified 2026-10-17;
-Copilot moves fast, so re-check before reuse.** Sources: docs.github.com/en/copilot,
-code.visualstudio.com/docs, github.blog/changelog, and the
-[findings file](./docs/research/COPILOT_FINDINGS_2026-10-17.md).
+**Slide 42:** eight takeaways, then the sources. Read the dates out loud: **Copilot docs verified
+2026-10-17; field test run 2026-10-28; Copilot moves fast, so re-check before reuse.** Sources:
+docs.github.com/en/copilot, code.visualstudio.com/docs, github.blog/changelog, the
+[findings file](./docs/research/COPILOT_FINDINGS_2026-10-17.md) and the
+[field reports](./docs/ai-agents-code-methodology/field-reports/).
 
 🗣️ *"From assistant to system: the tool changes and the discipline doesn't. On Copilot, part of that discipline can finally be enforced."*

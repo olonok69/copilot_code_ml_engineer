@@ -44,6 +44,7 @@
 14. [Transferir la metodología: de Claude Code a Copilot](#14-transferir-la-metodología)
 15. [Sincronización de máquinas (tarball + S3)](#15-sincronización-de-máquinas)
 16. [Grafo de conocimiento de tickets](#16-grafo-de-conocimiento-de-tickets)
+17. [Prueba de campo 2026-10-28: la metodología en Copilot, medida](#17-prueba-de-campo-2026-10-28)
 
 **Apéndices**
 
@@ -770,6 +771,26 @@ renombrar o borrar (distingue métodos con el mismo nombre por su clase). Comple
 de solo lectura [`refactor-scout`](./.github/agents/refactor-scout.agent.md) empaqueta CodeGraph → Serena →
 grep.
 
+**Copilot no hereda Serena de otros agentes.** En la prueba de campo del 2026-10-28 faltaba solo porque
+nunca se había registrado para Copilot. Añadirlo a la configuración personal lo arregló:
+```jsonc
+// ~/.copilot/mcp-config.json (haz antes una copia)
+{ "mcpServers": {
+    "serena": { "command": "uvx", "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"], "tools": ["*"] }
+} }
+```
+Medido tras reiniciar, en Copilot de VS Code: funcionaron `initial_instructions`, `find_symbol` y
+`find_referencing_symbols`; `safe_delete_symbol` se negó a borrar un método referenciado y listó sus 5
+referencias; `rename_symbol` informó de 7 cambios entre la definición, un llamador y tests en 3 ficheros
+(revertido con git). No se probaron `replace_symbol_body` ni las herramientas de inserción.
+- **Atención:** la primera llamada de cada sesión puede agotar el tiempo mientras arranca el servidor de
+  lenguaje de Python (~1 min). Reintenta.
+- **Atención:** las ediciones llegan al disco un poco después de que la herramienta responde: un `git diff`
+  inmediato puede salir vacío.
+- Serena guarda su caché en `.serena/` (ignorado) y puede listar referencias dentro de copias en `data/`
+  (también ignorado).
+- Orden de respaldo cuando Serena no está: CodeGraph → usos de Pylance → grep.
+
 ### GSD ([`examples/gsd/`](./examples/gsd/)): solo Claude Code
 Ciclo por fases con estado versionado en `.planning/` y subagentes especializados. **No hay port a
 Copilot.** Las piezas más cercanas en Copilot:
@@ -905,6 +926,16 @@ pregunta que responde primero; si la respuesta es ambigua, se detiene y pregunta
 > **Atención: mide una optimización antes de citarla.** Se predijo "de minutos a segundos"; se midió
 > 212 s → 123 s.
 
+> **Prueba de campo 2026-10-28 (Copilot, jornada real).** `day start` detectó que `LOCAL_DATA` en
+> `config.env` apuntaba a otro checkout **antes** de cualquier pull; tras un arreglo solo local, se regeneró
+> `IDENTITY.md`, la simulación de `changes` no encontró nada que subir y el pull se ejecutó con snapshot
+> previo, apartó los ficheros borrados aguas arriba y no usó `--delete`. `day end` solo se ejecutó como vista
+> previa simulada de la publicación más el registro de actividad en solo lectura. Esa vista previa mostró dos
+> ficheros de `knowledge-graph/_corpus` que se habrían subido pese a la regla de contribuidor: una
+> publicación real debe excluirlos, escribir antes la fila de STATUS y no usar nunca `--delete`. Un
+> `canary_leadin_diff.json` local sobrescrito por una re-ejecución se restauró desde el bucket con un
+> `s3 cp` de solo lectura. Ver [§17](#17-prueba-de-campo-2026-10-28).
+
 ---
 
 # CONTINUACIÓN DE LA SESIÓN 2 — El grafo de conocimiento de tickets (graphify)
@@ -957,6 +988,12 @@ es una skill y no un script.
 `kg explain <ticket|topic>` antes de hacer grep en `data/changes/`. `EXTRACTED` = fiable; `INFERRED` = una
 pista que hay que verificar. La ganancia real es la capacidad de recordar en las zonas densas.
 
+> **Atención: nota de campo (2026-10-28).** `/kg count edges` en Copilot devolvió metadatos de tamaño del
+> grafo (3.921 nodos / 8.508 aristas), pero `kg_query.sh` solo admite `explain`, `path` y `find`. Llamar al
+> script con `count edges` no es una prueba de recuento válida; no la presentes como tal.
+> `kg_query.sh find <substr>` funcionó (22 coincidencias). No regeneres el grafo desde una máquina
+> contribuidora.
+
 > **Atención: "derivado" es una propiedad del fichero, no de la carpeta.** Dentro del árbol generado vive
 > un fichero escrito a mano (los nombres curados de las comunidades) que nada regenera; en una
 > reconstrucción real sobrevivió **menos del 1%**. Clasifica por fichero: fuente / derivado / escrito a mano
@@ -966,6 +1003,67 @@ pista que hay que verificar. La ganancia real es la capacidad de recordar en las
 > **Coste, con honestidad.** "Sin LLM al consultar" no significa "gratis": el razonamiento se paga una vez,
 > al construir; cada consulta `kg` es una búsqueda determinista cuyo único coste es que el agente lea una
 > salida corta. Se paga una vez y se cobra en cada uso, desde cualquiera de los cuatro agentes.
+
+---
+
+## 17. Prueba de campo 2026-10-28
+
+La metodología y todas sus skills se ejecutaron con el **agente de GitHub Copilot en VS Code** en una
+jornada real que no era de producción, con algunas restricciones deliberadas. Informes completos:
+[`COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md`](./docs/ai-agents-code-methodology/field-reports/COPILOT_METHODOLOGY_LIVE_VALIDATION_2026-10-28.md)
+(skill a skill) y
+[`COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md`](./docs/ai-agents-code-methodology/field-reports/COPILOT_SST-6880_METHOD_REPLAY_2026-10-28.md)
+(un ticket repetido a través de los gates). Son resultados **medidos** que sustituyen la afirmación
+anterior de que "se espera paridad". No significan que se haya publicado, fusionado o subido nada.
+
+### Skill a skill
+
+| Skill / herramienta | Resultado | Qué se ejecutó de verdad | Límites |
+|---|---|---|---|
+| `day` start | PASA, acotado | Identidad + AWS no productivo comprobados; destino de sincronización obsoleto corregido (solo local, autorizado por el usuario); simulación limpia; pull protegido con snapshot, sin `--delete` | `git fetch` bloqueado (sin credenciales de GitHub no interactivas) |
+| `day` end | MÍNIMO | Vista previa simulada de la publicación + registro de actividad en solo lectura | Sin subida; la vista previa marcó 2 ficheros de `_corpus` que hay que excluir |
+| `evidence` | PASA, en vivo y solo lectura | 2 ejecuciones de desarrollo: fuente, DOCX resaltado, resultado bruto de la Lambda, log saneado; los hashes de la fuente coinciden | No es el contrato de consumo `get-sl-upload-status` (necesita una sesión de la aplicación) |
+| `preview` / visor | PASA, resultados capturados | Frontend local + APIs simuladas mostraron los resultados capturados; contenedores eliminados después | A propósito no es el comando normal de preview, que re-extrae y puede gastar llamadas al modelo |
+| `atlassian` | PASA | Suite simulada de 62 tests; 3 GET de solo lectura aprobados (2 Jira, 1 metadatos de Confluence) | Sin cuerpos de página, comentarios, exportaciones ni escrituras |
+| `kg` | PASA, acotado | `find` con 22 coincidencias; `/kg count edges` solo devolvió metadatos | Ver la nota de §16 sobre `count` |
+| `kg-refresh` | FUERA DE ALCANCE | — | Excluido por el usuario |
+| `methodology-plan` | PARCIAL | Plan sintético de seis partes; gates 1–5 repetidos sobre el ticket real | No se hizo el acuerdo completo con la plantilla |
+| `sanitise-diff` | PASA | Fixture desechable y después el diff real del arreglo (134 líneas añadidas) en un repo desechable | 1 id de ticket interno en un docstring de test (convención del repo) |
+| CodeGraph | PASA, acotado | Consulta de un símbolo: un fichero con sus llamadores y dependencias | Navegación, no cobertura de tests |
+| Serena | PASA, en vivo | Ver [§13](#13-las-herramientas-del-método) | Primera llamada lenta; las ediciones llegan tarde |
+| Context7 | NO PROBADO | Conectado según el usuario | La sesión no expuso ninguna herramienta |
+
+### Un ticket, repetido
+
+En un clon de respaldo, rama `replay/…-pre-fix` creada desde el commit anterior al arreglo original:
+
+| Gate | Resultado |
+|---|---|
+| Causa raíz | La misma que con los agentes anteriores: `is_potential_title` rechaza un título de 13 palabras (`TITLE_LEN_MAX` = 13) y `_underlined_lead_in_titles` se detiene en un número tecleado sin subrayar (`59.`), así que `_is_acceptable_title` nunca lo rescata. **No fue a ciegas**: el plan del arreglo se había leído antes. |
+| RED | 14 tests nuevos: 5 fallan en el comportamiento buscado (aserciones, no errores de importación), 9 guardas pasan |
+| GREEN | Una función, ~18 líneas añadidas + 2 regex, sin cambiar umbrales, prompts ni configuración; 14/14 nuevos + 17/17 existentes = 31 pasan |
+| Radio de impacto | Diff de entradillas sin LLM sobre el corpus local, primero el canario: 8 ficheros ganan entradillas, exactamente 1 entrada cambia un resultado; las cifras coinciden con el barrido registrado en el ticket |
+| Imagen desplegada | Re-extracción real con LLM en la imagen desplegada (rama montada en solo lectura, sobre una copia): 94 cláusulas, pasan las 6 comprobaciones |
+| Regresión | Subconjunto relacionado: 235 pasan, 1 omitido, 0 fallan. Suite completa: 1552 → 1566 pasan (+14), los mismos 3 fallos y los mismos 5 errores de recogida (broker 0.1.3 frente a v0.1.5 en el venv del host; esos ficheros no se ejecutaron) |
+| Saneado | 0 nombres (lista de 11 entradas), secretos, ids de cuenta, correos o atribución; 1 id de ticket interno |
+| Cierre | Arreglo y tests revertidos y archivados (`fix.diff`, el test como `.txt`); rama de repetición borrada; nada confirmado ni subido |
+
+Pendiente en el flujo real: la comprobación de re-subida en la función desplegada tras un merge, y una
+ejecución a ciegas sobre un ticket no visto.
+
+### Hallazgos prácticos
+
+- Las importaciones en frío del extractor desde `/mnt/d` tardan ~5 min (limitadas por E/S; ~1,5–2 min con
+  caché). Un tiempo de espera corto ahí es un límite de la herramienta, no un defecto.
+- Las ejecuciones locales necesitan valores ficticios de `SQS_LAMBDACLIENTSL` / `SQS_MATTERRPCSERVICE`; no se
+  usa la red.
+- El extractor reescribe el DOCX que abre: ejecuta siempre sobre una copia y comprueba después el mtime del
+  original.
+- Si al venv del host le falta una versión de una dependencia, ejecuta dentro de la imagen desplegada con la
+  rama montada en solo lectura, como hizo la segunda ejecución del propio ticket.
+- Repetir un diff del corpus sobrescribe el fichero de salida registrado: guarda antes una copia exacta.
+- Las carpetas de evidencia contienen documentos de clientes. Se quedan en local e ignoradas; no las copies
+  nunca a slides ni a commits.
 
 ---
 
