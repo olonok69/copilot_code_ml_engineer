@@ -19,7 +19,7 @@ Set up a reliable AI-agent workflow with GitHub Copilot with:
 ## Read in order
 
 1. `README.md` — the methodology (tool-agnostic).
-2. `TECHNICAL.md` — the mechanics.
+2. `TECHNICAL.md` — the mechanics (Spanish: `TECHNICAL_ES.md`).
 3. `COPILOT_ADAPTATION.md` — surfaces, file mapping, hooks, the two new holes to close.
 4. `copilot/README.md` — the copy-ready files and where each goes.
 5. `TRANSFER_AND_BOOTSTRAP.md` — moving the pack and installing it.
