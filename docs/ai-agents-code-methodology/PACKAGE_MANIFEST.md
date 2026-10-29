@@ -5,7 +5,7 @@ Artifacts included in the portable methodology package (GitHub Copilot edition).
 ## Core docs
 
 1. `README.md`
-2. `TECHNICAL.md`
+2. `TECHNICAL.md` (Spanish: `TECHNICAL_ES.md`)
 3. `COPILOT_ADAPTATION.md`
 4. `START_HERE.md`
 5. `TRANSFER_AND_BOOTSTRAP.md`

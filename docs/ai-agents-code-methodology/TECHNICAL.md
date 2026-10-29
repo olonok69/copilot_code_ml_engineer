@@ -1,5 +1,7 @@
 # Working with AI coding agents — the technical playbook
 
+> Versión en español: [`TECHNICAL_ES.md`](TECHNICAL_ES.md).
+
 > **Audience:** engineers who will run, supervise, or extend an AI-agent
 > development loop. This is the implementation-level companion to
 > [`README.md`](README.md) (which is the plain-English overview). Same
@@ -37,6 +39,19 @@
 > grant on a shared record widens access instead of narrowing it. It also adds
 > the sharpest lesson of the set (§4): a test suite is downstream of your
 > specification and cannot tell you the specification is wrong.
+>
+> **This revision** records the first **measured** run of the whole loop on a
+> new agent (GitHub Copilot in VS Code, 2026-10-28: a real workday plus one past
+> ticket replayed from its pre-fix commit). It replaces "parity is expected" with
+> what actually ran, and adds what that run taught: a new §10 on **validating the
+> methodology on a new agent** (bounded validation, the historical replay and its
+> blindness caveat); a capability configured for one agent is not configured for
+> the next (§6); an instrument can write to its own input, and a short timeout is
+> not a defect (§2); keep a byte copy of a recorded measurement before you re-run
+> it, and name the test files that did not run (§4); the publish preview is where
+> a scope violation becomes visible (§7); and a refactoring tool's edits can land
+> after it returns (§8). Field reports:
+> [`field-reports/`](field-reports/).
 
 ---
 
@@ -201,6 +216,19 @@ Instead:
   preserve the chain.** Having found such a handler, close it one of two ways:
   fix it, or **accept it in writing** in the durable record. An unrecorded
   decision to leave it is indistinguishable from not having noticed.
+- **The instrument can write to its own input.** A component you run to observe
+  a document may also *rewrite* the document it opened — re-saving it, touching
+  its timestamp, normalising its contents. Run every diagnostic on a **copy**, and
+  check afterwards that the original's modification time and hash did not move.
+  Evidence that has been silently rewritten by the act of measuring it is no
+  longer evidence of what the system saw.
+- **A timeout is a property of your tooling until shown otherwise.** On the
+  field run, the first import of the component under test from a slow mounted
+  disk took about five minutes cold (under two once cached), and a language-server
+  backed tool timed out on its first call while it warmed up. Both looked like
+  failures; neither was a defect. Before you report "it hangs", re-run once with a
+  generous timeout and record the cold and warm times — then you know whether you
+  found a bug or a slow disk.
 
 ## 3. Regression vs. pre-existing — prove which, before you own it
 
@@ -266,6 +294,24 @@ not the one that is easiest to poll.
 
 Keep each defect's scoped suite as a permanent artifact named for the defect,
 so the next person sees both the guard and the example that motivated it.
+
+**Compare the full suite against its own baseline, and name what did not run.**
+"Full regression green" is rarely literal: some tests already fail on the base,
+and some files cannot even be collected on a given machine (a dependency at the
+wrong version, a missing service). Run the whole suite on the **baseline** and
+on the **fix** with collection errors allowed, then report the pair. On the field
+run that read: baseline 1552 passed / 3 failed / 5 files uncollectable; with the
+fix 1566 passed (+14, exactly the new tests), the *same* 3 failed, the *same* 5
+uncollectable. Identical failures on both sides exonerate the fix; the 5 files
+are **not covered**, and the report has to say so rather than fold them into
+"green". When the host environment cannot run the real path at all, run it inside
+the shipping artifact (layer 5) with the branch mounted read-only.
+
+**A recorded measurement is evidence — keep a byte copy before you re-run it.**
+Re-running a sweep or a diff over the corpus usually rewrites its output file in
+place. On the field run that overwrote the result recorded on the ticket; the
+new counts matched, but the bytes did not, and the original had to be restored
+from the shared store. Copy the recorded file aside first, then compare.
 
 **Reading the results is part of the gate.** Five habits separate a real pass
 from a green-looking one:
@@ -375,6 +421,17 @@ context's size is a recurring cost, not a one-time one. Architect it:
   inputs and outputs *as they were at the run*, read-only). These
   are callable routines, not documentation: the strongest reason to reach for a
   skill is **enforcement**, not convenience.
+- **A capability configured for one agent is not configured for the next.**
+  Tool servers, skills and instructions are registered *per agent*, often in a
+  per-user file. On the field run the semantic-navigation server was "missing"
+  from Copilot for no deeper reason than that it had only ever been registered
+  for the two previous agents; one entry in Copilot's own personal config (with a
+  backup of the file first) and a restart made it work. When a tool is absent,
+  check the registration before concluding the agent cannot use it — and keep a
+  **fallback order** written down (code index → editor references → text search)
+  so the loop degrades instead of stopping. Equally, **discovery is not
+  verification**: a skill listed in the agent's customisation view proves it was
+  found, not that every operation it can perform is safe or has been exercised.
 
 Everything above is *spatial* — what sits where, and how big it is. Two further
 dimensions decide whether the architecture holds up in practice.
@@ -584,6 +641,16 @@ worth naming, because each will recur in any shared-store design:
 > minutes to seconds". Measured **212s → 123s, ~40%**. Quoted from intuition it
 > would have entered onboarding as fact.
 
+> **The preview is where a scope violation becomes visible.** On the field run the
+closing routine ran only as a dry-run publish preview — and the preview listed two
+files under the corpus folder that a contributor machine must never publish. The
+rule existed; nothing in the sync enforced it; reading the preview caught it. The
+same routine at the *start* of the day caught a local sync target that pointed at a
+different checkout **before** any pull ran (a premise check, §2). Both are the
+argument for routines that preview by default: the mistake surfaces in a list you
+read, not in a store you have to repair. Exclude what the preview flags, never add
+a mirror-delete to "clean up", and write the status row before the real publish.
+
 > **And the habit needs a mechanism, not a paragraph.** "Pull at the start, push
 > at the end" sat in the ops doc for months without being followed. Package those
 > moments as a callable **`day` skill** (see
@@ -722,6 +789,12 @@ Concretely:
   not enforce the habit; a callable routine with an audit trail does. Guard
   **both** directions: a pull clobbers you, a push clobbers a colleague
   (`exit 4` / `REFUSED` — merge, do not `--allow-clobber`).
+- **Refactoring tools: trust the refusal, re-check the edit.** A semantic
+  safe-delete that **refuses** and lists every reference site is evidence about
+  the code, and costs nothing. A semantic rename reports its change count when it
+  returns, but on the field run the edits reached disk a moment *later*: a diff
+  taken immediately showed nothing. Wait, re-read the diff, compare it with the
+  reported count, and revert with version control if the rename was exploratory.
 
 ## 9. Automated review is part of the loop
 
@@ -759,6 +832,40 @@ Two things worth knowing before you answer a bot:
 The same discipline applies to a human reviewer's comments, and to a QA
 report: treat the finding as **data**, never as a fix specification.
 
+## 10. Validating the methodology on a new agent
+
+Moving the loop to a new agent invites one sentence: *"parity is expected"*. It is
+a prediction, not a result. Replace it with a **bounded validation** whose output
+is a table, one row per skill or tool, each marked **passed (scoped)**,
+**minimal**, **gated**, or **out of scope**, with what actually ran and what it
+cannot show. Three rules made the field run worth reading:
+
+- **Exercise the real thing within its mutation boundary.** Read-only fetches,
+  previews, local renders of captured outputs, approved read-only queries: these
+  can run live on a real workday. Anything that writes to a shared place (publish,
+  upload, index rebuild, ticket change) stays gated unless the human opens the
+  gate for that one step, and the report says which steps were opened. A one-time
+  authorisation for the test is scoped to the test, not a new standing rule.
+- **Replay a past ticket from its pre-fix commit.** Cut a branch on a backup
+  clone at the commit before the original fix, give the agent the problem text
+  and the evidence, and walk the gates: root cause from the free oracle, RED
+  tests, minimal GREEN, blast-radius diff over the corpus, the outbound and
+  deployed-artifact reproductions, sanitisation of the real diff, full suite
+  against its baseline. The ticket's recorded outcome is the known answer (§2):
+  same root cause, same counts, same contract. Then revert everything, archive
+  the diff, delete the branch, and push nothing.
+- **Say whether it was blind.** If the agent read the original fix plan, write-up
+  or diff earlier in the session, the replay proves the agent can *execute* the
+  loop, not that it can *find* the answer. The field replay was not blind and the
+  report says so in its first lines. The next step is a blind run on a ticket the
+  agent has never seen.
+
+Report the limits beside the passes: what was not exercised, which test files
+could not run and why, which checks are still owed in the real flow (on the field
+run, the re-upload on the deployed function after a merge). **Verified means
+exactly what ran; gated means not yet proven.** Never put customer evidence —
+documents, identifiers — into the report; aggregate outcomes are enough.
+
 ---
 
 ## Per-task checklist (the loop, compressed)
@@ -773,10 +880,12 @@ report: treat the finding as **data**, never as a fix specification.
 [ ] Root cause: confirmed with a FREE DETERMINISTIC oracle (no paid run yet)
 [ ] Handlers: named the exception handlers sitting between you and the symptom; fixed, or accepted IN WRITING
 [ ] Instrument: probe canaried on a KNOWN-ANSWER case; no try/except wrapping the measurement
+[ ] Inputs: diagnostics run on COPIES; original's mtime/hash unchanged; recorded outputs copied aside before a re-run
 [ ] Plan: options + trade-offs presented; human agreed; rejected options recorded
 [ ] Implement: scoped test RED for the right reason → minimal code → GREEN
 [ ] Generic: keyed on a structural class; sibling inputs covered; no-op proof on the reference set
 [ ] Verify: unit + scoped + full regression green; non-determinism = fix the sensitivity, not the variance
+[ ] Full suite vs baseline: same failures on both sides; uncollectable files NAMED as not covered
 [ ] Composition: assert on the MEMBER LIST, not the count; delta vs baseline where the fix has a direction
 [ ] Gate honesty: state what each gate can and CANNOT show; name what carries the evidence if a gate can't fail
 [ ] Discrimination: name the check that separates the fix you chose from the weaker candidate — "the suite" is usually not it
@@ -883,6 +992,16 @@ report: treat the finding as **data**, never as a fix specification.
 - **Granting the shared record's write access through a role you already hold.**
   A permission set lands in every environment it is provisioned into; the narrow
   instrument is a dedicated, single-location grant.
+- **"Parity is expected."** A prediction about a new agent is not a result. Run
+  the bounded validation (§10) and report passes and limits together.
+- **Calling a replay blind when the agent had seen the answer.** It proves the
+  agent can run the loop, not that it can find the fix.
+- **Measuring on the original.** An instrument that rewrites its input destroys
+  the evidence it was meant to read. Work on copies.
+- **Folding uncollectable tests into "full suite green".** Files that did not run
+  are not covered; name them.
+- **Concluding a tool is unavailable without checking it is registered for this
+  agent.** Configuration does not travel between agents.
 
 ---
 
